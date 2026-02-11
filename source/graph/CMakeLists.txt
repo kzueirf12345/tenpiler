@@ -1,5 +1,5 @@
 add_library(graph STATIC
-    src/graph.cpp
+    src/Node.cpp
 )
 
 target_include_directories(graph
@@ -16,7 +16,6 @@ if(TARGET project_sanitizers)
     target_link_libraries(graph PRIVATE project_sanitizers)
 endif()
 
-# Гарантируем, что библиотека и бинарник используют одинаковые флаги
 set_target_properties(graph PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
