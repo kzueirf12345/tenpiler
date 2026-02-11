@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) 
 
+###===========================================FLAGS=================================================
+
 option(SANITIZE "Enable AddressSanitizer + UndefinedBehaviorSanitizer" OFF)
 
 if(MSVC)
@@ -33,9 +35,54 @@ if(SANITIZE AND NOT MSVC)
     )
 endif()
 
+###===========================================ONNX==================================================
+
+# 1. Ищем Protobuf (обязательная зависимость ONNX)
+find_package(Protobuf REQUIRED)
+if(NOT Protobuf_FOUND)
+    message(FATAL_ERROR "Protobuf not found. Install libprotobuf-dev and protobuf-compiler")
+endif()
+
+# 2. Ручной поиск ONNX (т.к. официальный пакет не всегда предоставляет config-файл)
+find_path(ONNX_INCLUDE_DIR
+    NAMES onnx/onnx-ml.pb.h
+    PATHS /usr/local/include /usr/include
+    REQUIRED
+)
+
+find_library(ONNX_LIBRARY
+    NAMES onnx
+    PATHS /usr/local/lib /usr/lib
+    REQUIRED
+)
+
+find_library(ONNX_PROTO_LIBRARY
+    NAMES onnx_proto
+    PATHS /usr/local/lib /usr/lib
+    REQUIRED
+)
+
+# 3. Создаём импортированные цели (как если бы был найден через find_package)
+add_library(onnx::onnx SHARED IMPORTED)
+set_target_properties(onnx::onnx PROPERTIES
+    IMPORTED_LOCATION "${ONNX_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${ONNX_INCLUDE_DIR}"
+)
+
+add_library(onnx::onnx_proto SHARED IMPORTED)
+set_target_properties(onnx::onnx_proto PROPERTIES
+    IMPORTED_LOCATION "${ONNX_PROTO_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${ONNX_INCLUDE_DIR}"
+)
+
+
+###===========================================SUBDIRECTORY==========================================
 add_subdirectory(source/graph)
 
 add_executable(tenpiler source/main.cpp)
+
+
+###===========================================LIB_LINK==============================================
 
 target_link_libraries(tenpiler PRIVATE project_warnings)
 
@@ -43,4 +90,10 @@ if(SANITIZE AND NOT MSVC)
     target_link_libraries(tenpiler PRIVATE project_sanitizers)
 endif()
 
-target_link_libraries(tenpiler PRIVATE graph)
+target_link_libraries(tenpiler PRIVATE
+    onnx::onnx
+    onnx::onnx_proto
+    ${Protobuf_LIBRARIES}
+
+    graph
+)
