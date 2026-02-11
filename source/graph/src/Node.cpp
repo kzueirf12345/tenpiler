@@ -1,4 +1,5 @@
 #include "graph/Node.hpp"
+
 #include <cmath>
 #include <stdexcept>
 #include <string_view>
