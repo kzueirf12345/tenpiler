@@ -78,6 +78,7 @@ set_target_properties(onnx::onnx_proto PROPERTIES
 ###===========================================SUBDIRECTORY==========================================
 
 add_subdirectory(source/graph)
+add_subdirectory(source/utils)
 
 add_executable(tenpiler source/main.cpp)
 
@@ -95,4 +96,5 @@ target_link_libraries(tenpiler PRIVATE
     ${Protobuf_LIBRARIES}
 
     graph
+    utils
 )

@@ -1,4 +1,5 @@
 #include "graph/Graph.hpp"
+#include "graph/NodeFactory.hpp"
 
 namespace tenpiler {
 namespace graph {
@@ -36,7 +37,29 @@ Graph::Graph(const onnx::GraphProto& onnx_graph)
         tensors_.emplace(std::move(internal_tensor_name), std::move(internal_tensor));
     }
 
-    // TODO fill nodes_
+    const auto& onnx_nodes = onnx_graph.node();
+
+    nodes_.reserve(onnx_nodes.size());
+
+    for (const auto& onnx_node: onnx_nodes) {
+        nodes_.push_back(NodeFactory::Create(onnx_node));
+    }
+}
+
+const std::vector<std::unique_ptr<Node>>& Graph::getNodes() const {
+    return nodes_;
+}
+const std::unordered_map<std::string, Tensor>& Graph::getTensors() const {
+    return tensors_;
+}
+const std::vector<std::string>& Graph::getInputs() const {
+    return input_;
+}
+const std::vector<std::string>& Graph::getOutputs() const {
+    return output_;
+}
+const Tensor& Graph::getTensor(const std::string& name) const {
+    return tensors_.at(name);
 }
 
 }

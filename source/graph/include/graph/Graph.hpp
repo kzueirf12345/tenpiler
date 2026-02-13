@@ -6,7 +6,7 @@
 #include <onnx/onnx-ml.pb.h>
 
 #include "graph/Tensor.hpp"
-#include "graph/Node.hpp"
+#include "graph/Node/Node.hpp"
 
 namespace tenpiler {
 namespace graph {
@@ -16,6 +16,13 @@ class Graph {
 public:
 
     explicit Graph(const onnx::GraphProto& onnx_graph);
+
+    [[nodiscard]] const std::vector<std::unique_ptr<Node>>& getNodes() const;
+    [[nodiscard]] const std::unordered_map<std::string, Tensor>& getTensors() const;
+    [[nodiscard]] const std::vector<std::string>& getInputs() const;
+    [[nodiscard]] const std::vector<std::string>& getOutputs() const;
+
+    [[nodiscard]] const Tensor& getTensor(const std::string& name) const;
 
 private:
 

@@ -1,8 +1,8 @@
 #include "graph/Tensor.hpp"
 
-#include <stdexcept>
-
 #include <onnx/onnx-ml.pb.h>
+
+#include "utils/common.hpp"
 
 namespace tenpiler {
 namespace graph {
@@ -23,24 +23,26 @@ static Tensor::Type ParseOnnxTensorType(int onnx_type) {
         case onnx::TensorProto::DataType::TensorProto_DataType_UINT32: return Tensor::Type::Uint32;
         case onnx::TensorProto::DataType::TensorProto_DataType_UINT64: return Tensor::Type::Uint64;
         default:
-            throw std::runtime_error("Unsopported onnx data type " 
+            utils::THROW("Unsopported onnx data type " 
                 + onnx::TensorProto::DataType_Name(onnx_type));
     }
+
+    return Tensor::Type::Int8;
 }
 
 Tensor::Tensor(const onnx::ValueInfoProto& onnx_tensor) {
     if (!onnx_tensor.has_type() || !onnx_tensor.type().has_tensor_type())
     {
-        throw std::runtime_error("tenpiler::graph::Tensor can't ctor from not tensor type");
+        utils::THROW("tenpiler::graph::Tensor can't ctor from not tensor type");
     }
 
     if (!onnx_tensor.has_name()) {
-        throw std::runtime_error("tenpiler::graph::Tensor can't ctor from tensor without name");
+        utils::THROW("tenpiler::graph::Tensor can't ctor from tensor without name");
     }
     name = onnx_tensor.name();
 
     if (!onnx_tensor.type().tensor_type().has_elem_type()) {
-        throw std::runtime_error("tenpiler::graph::Tensor can't ctor from tensor without elem type");
+        utils::THROW("tenpiler::graph::Tensor can't ctor from tensor without elem type");
     }
     type = ParseOnnxTensorType(onnx_tensor.type().tensor_type().elem_type());
 
@@ -57,7 +59,7 @@ Tensor::Tensor(const onnx::ValueInfoProto& onnx_tensor) {
             if (dim.has_dim_value()) {
                 shape.push_back(dim.dim_value());
             } else {
-                throw std::runtime_error("Dimension " + std::to_string(dim_ind) + " has no value");
+                utils::THROW("Dimension " + std::to_string(dim_ind) + " has no value");
             }
         }
     }
@@ -65,12 +67,12 @@ Tensor::Tensor(const onnx::ValueInfoProto& onnx_tensor) {
 
 Tensor::Tensor(const onnx::TensorProto& onnx_tensor) {
     if (!onnx_tensor.has_name()) {
-        throw std::runtime_error("tenpiler::graph::Tensor can't ctor from tensor without name");
+        utils::THROW("tenpiler::graph::Tensor can't ctor from tensor without name");
     }
     name = onnx_tensor.name();
 
     if (!onnx_tensor.has_data_type()) {
-        throw std::runtime_error("tenpiler::graph::Tensor can't ctor from tensor without elem type");
+        utils::THROW("tenpiler::graph::Tensor can't ctor from tensor without elem type");
     }
     type = ParseOnnxTensorType(onnx_tensor.data_type());
 
@@ -82,7 +84,7 @@ Tensor::Tensor(const onnx::TensorProto& onnx_tensor) {
         if (dim > 0) {
             shape.push_back(dim);
         } else {
-            throw std::runtime_error("Dimension " + std::to_string(dim_ind) + " has no value");
+            utils::THROW("Dimension " + std::to_string(dim_ind) + " has no value");
         }
     }
 }
