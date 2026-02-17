@@ -9,15 +9,15 @@
 namespace tenpiler {
 namespace graph {
 
-const std::string& Node::sayMyName() const {
+const std::string& Node::sayMyName() const noexcept {
     return op_type_;
 }
 
-const std::vector<std::string>& Node::getInputs() const {
+const std::vector<std::string>& Node::getInputs() const noexcept {
     return inputs_;
 }
 
-const std::vector<std::string>& Node::getOutputs() const {
+const std::vector<std::string>& Node::getOutputs() const noexcept {
     return outputs_;
 }
 

@@ -15,10 +15,10 @@ class Node {
 
 public:
 
-    [[nodiscard]] const std::string& sayMyName() const;
+    [[nodiscard]] const std::string& sayMyName() const noexcept;
 
-    [[nodiscard]] const std::vector<std::string>& getInputs() const;
-    [[nodiscard]] const std::vector<std::string>& getOutputs() const;
+    [[nodiscard]] const std::vector<std::string>& getInputs() const noexcept;
+    [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept;
 
     virtual ~Node() = default;
 

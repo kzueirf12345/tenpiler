@@ -46,19 +46,19 @@ Graph::Graph(const onnx::GraphProto& onnx_graph)
     }
 }
 
-const std::vector<std::unique_ptr<Node>>& Graph::getNodes() const {
+const std::vector<std::unique_ptr<Node>>& Graph::getNodes() const noexcept {
     return nodes_;
 }
-const std::unordered_map<std::string, Tensor>& Graph::getTensors() const {
+const std::unordered_map<std::string, Tensor>& Graph::getTensors() const noexcept {
     return tensors_;
 }
-const std::vector<std::string>& Graph::getInputs() const {
+const std::vector<std::string>& Graph::getInputs() const noexcept {
     return input_;
 }
-const std::vector<std::string>& Graph::getOutputs() const {
+const std::vector<std::string>& Graph::getOutputs() const noexcept {
     return output_;
 }
-const Tensor& Graph::getTensor(const std::string& name) const {
+const Tensor& Graph::getTensor(const std::string& name) const noexcept {
     return tensors_.at(name);
 }
 
