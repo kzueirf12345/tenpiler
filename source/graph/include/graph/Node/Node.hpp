@@ -17,7 +17,7 @@ public:
 
     [[nodiscard]] const std::string& sayMyName() const noexcept;
 
-    [[nodiscard]] const std::vector<std::string>& getInputs() const noexcept;
+    [[nodiscard]] const std::vector<std::string>& getInputs () const noexcept;
     [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept;
 
     virtual ~Node() = default;
@@ -39,7 +39,7 @@ class Add final: public Node {
 
 public:
 
-    static constexpr std::string_view Name = "Add";
+    static constexpr std::string_view OnnxName = "Add";
 
     static constexpr size_t INPUTS_SIZE = 2;
     static constexpr size_t OUTPUTS_SIZE = 1;
@@ -61,9 +61,9 @@ class Mul final: public Node {
 
 public:
 
-    static constexpr std::string_view Name = "Mul";
+    static constexpr std::string_view OnnxName = "Mul";
 
-    static constexpr size_t INPUTS_SIZE = 2;
+    static constexpr size_t INPUTS_SIZE  = 2;
     static constexpr size_t OUTPUTS_SIZE = 1;
 
     static std::unique_ptr<Node> create(
@@ -83,11 +83,11 @@ class Conv final: public Node {
 
 public:
 
-    static constexpr std::string_view Name = "Conv";
+    static constexpr std::string_view OnnxName = "Conv";
 
     static constexpr size_t MIN_INPUTS_SIZE = 2;
     static constexpr size_t MAX_INPUTS_SIZE = 3;
-    static constexpr size_t OUTPUTS_SIZE = 1;
+    static constexpr size_t OUTPUTS_SIZE    = 1;
 
 public:
 
@@ -143,7 +143,7 @@ class Relu final: public Node {
 
 public:
 
-    static constexpr std::string_view Name = "Relu";
+    static constexpr std::string_view OnnxName = "Relu";
 
     static constexpr size_t INPUTS_SIZE = 1;
     static constexpr size_t OUTPUTS_SIZE = 1;
@@ -165,7 +165,7 @@ class MatMul final: public Node {
 
 public:
 
-    static constexpr std::string_view Name = "MatMul";
+    static constexpr std::string_view OnnxName = "MatMul";
 
     static constexpr size_t INPUTS_SIZE = 2;
     static constexpr size_t OUTPUTS_SIZE = 1;
@@ -187,7 +187,7 @@ class Gemm final: public Node {
 
 public:
 
-    static constexpr std::string_view Name = "Gemm";
+    static constexpr std::string_view OnnxName = "Gemm";
 
     static constexpr size_t MIN_INPUTS_SIZE = 2;
     static constexpr size_t MAX_INPUTS_SIZE = 3;

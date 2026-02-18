@@ -19,16 +19,16 @@ public:
         Float16 = 1,
         Float32 = 2,
         Float64 = 3,
-        Uint8 = 4,
-        Uint16 = 5,
-        Uint32 = 6,
-        Uint64 = 7,
-        Int8 = 8,
-        Int16 = 9,
-        Int32 = 10,
-        Int64 = 11,
-        String = 12,
-        Bool = 13,
+        Uint8   = 4,
+        Uint16  = 5,
+        Uint32  = 6,
+        Uint64  = 7,
+        Int8    = 8,
+        Int16   = 9,
+        Int32   = 10,
+        Int64   = 11,
+        String  = 12,
+        Bool    = 13,
     };
 
     Type type = Tensor::Type::Unknown;
@@ -36,7 +36,7 @@ public:
 public:
 
     Tensor(const onnx::ValueInfoProto& onnx_tensor);
-    Tensor(const onnx::TensorProto& onnx_tensor);
+    Tensor(const onnx::TensorProto&    onnx_tensor);
 };
 
 }

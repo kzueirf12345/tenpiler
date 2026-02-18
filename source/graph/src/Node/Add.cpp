@@ -15,17 +15,17 @@ static std::unique_ptr<Node> CreateAdd(const onnx::NodeProto& onnx_node) {
 std::unique_ptr<Node> Add::create(std::vector<std::string> inputs, 
     std::vector<std::string> outputs
 ) {
-    detail::CheckSize( inputs.size(),  INPUTS_SIZE, std::string(Name),  "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(Name), "output parametrs");
+    detail::CheckSize( inputs.size(),  INPUTS_SIZE, std::string(OnnxName),  "input parametrs");
+    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
     return std::unique_ptr<Add>(new Add(std::move(inputs), std::move(outputs)));
 }
 
 Add::Add(std::vector<std::string> inputs, std::vector<std::string> outputs)
-    :   Node(std::string(Name), std::move(inputs), std::move(outputs))
+    :   Node(std::string(OnnxName), std::move(inputs), std::move(outputs))
 {}
 
 void Add::REGISTER_METHOD_NAME() {
-    NodeFactory::Register(std::string(Name), CreateAdd);
+    NodeFactory::Register(std::string(OnnxName), CreateAdd);
 }
 
 }

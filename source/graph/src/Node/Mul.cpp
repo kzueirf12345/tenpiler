@@ -15,17 +15,17 @@ static std::unique_ptr<Node> CreateMul(const onnx::NodeProto& onnx_node) {
 std::unique_ptr<Node> Mul::create(std::vector<std::string> inputs, 
     std::vector<std::string> outputs
 ) {
-    detail::CheckSize( inputs.size(),  INPUTS_SIZE, std::string(Name),  "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(Name), "output parametrs");
+    detail::CheckSize( inputs.size(),  INPUTS_SIZE, std::string(OnnxName),  "input parametrs");
+    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
     return std::unique_ptr<Mul>(new Mul(std::move(inputs), std::move(outputs)));
 }
 
 Mul::Mul(std::vector<std::string> inputs, std::vector<std::string> outputs)
-    :   Node(std::string(Name), std::move(inputs), std::move(outputs))
+    :   Node(std::string(OnnxName), std::move(inputs), std::move(outputs))
 {}
 
 void Mul::REGISTER_METHOD_NAME() {
-    NodeFactory::Register(std::string(Name), CreateMul);
+    NodeFactory::Register(std::string(OnnxName), CreateMul);
 }
 
 }

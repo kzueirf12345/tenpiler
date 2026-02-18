@@ -43,8 +43,8 @@ std::unique_ptr<Node> Gemm::create(
     bool transA,
     bool transB
 ) {
-    detail::CheckSize(inputs.size(), MIN_INPUTS_SIZE, MAX_INPUTS_SIZE, std::string(Name), "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(Name), "output parametrs");
+    detail::CheckSize(inputs.size(), MIN_INPUTS_SIZE, MAX_INPUTS_SIZE, std::string(OnnxName), "input parametrs");
+    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
 
     if (std::isnan(alpha)) {
         utils::THROW("Gemm alpha is NaN");
@@ -69,7 +69,7 @@ Gemm::Gemm(std::vector<std::string> inputs,
            float betta,
            bool transA,
            bool transB
-)   :   Node(std::string(Name), std::move(inputs), std::move(outputs))
+)   :   Node(std::string(OnnxName), std::move(inputs), std::move(outputs))
     ,   alpha_(alpha)
     ,   betta_(betta)
     ,   transA_(transA)
@@ -77,7 +77,7 @@ Gemm::Gemm(std::vector<std::string> inputs,
 {}
 
 void Gemm::REGISTER_METHOD_NAME() {
-    NodeFactory::Register(std::string(Name), CreateGemm);
+    NodeFactory::Register(std::string(OnnxName), CreateGemm);
 }
 
 

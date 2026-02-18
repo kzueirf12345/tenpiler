@@ -18,12 +18,12 @@ void NodeFactory::EnsureInit_() {
 }
 
 void NodeFactory::InitRegistry_() {
-    Add::REGISTER_METHOD_NAME();
-    Mul::REGISTER_METHOD_NAME();
-    Conv::REGISTER_METHOD_NAME();
-    Gemm::REGISTER_METHOD_NAME();
+    Add   ::REGISTER_METHOD_NAME();
+    Mul   ::REGISTER_METHOD_NAME();
+    Conv  ::REGISTER_METHOD_NAME();
+    Gemm  ::REGISTER_METHOD_NAME();
     MatMul::REGISTER_METHOD_NAME();
-    Relu::REGISTER_METHOD_NAME();
+    Relu  ::REGISTER_METHOD_NAME();
 } 
 
 void NodeFactory::Register(const std::string name, const CreateFunc_t create_func) {

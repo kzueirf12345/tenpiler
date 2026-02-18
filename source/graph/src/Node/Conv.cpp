@@ -85,8 +85,8 @@ std::unique_ptr<Node> Conv::create(
     uint64_t groups,
     Conv::PadType auto_pad
 ) {
-    detail::CheckSize(inputs.size(), MIN_INPUTS_SIZE, MAX_INPUTS_SIZE, std::string(Name), "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(Name), "output parametrs");
+    detail::CheckSize(inputs.size(), MIN_INPUTS_SIZE, MAX_INPUTS_SIZE, std::string(OnnxName), "input parametrs");
+    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
 
     if (kernel_shape.empty()) {
         utils::THROW(
@@ -149,7 +149,7 @@ Conv::Conv(std::vector<std::string> inputs,
            std::vector<uint64_t> dilations,
            uint64_t groups ,
            PadType auto_pad
-)   :   Node(std::string(Name), std::move(inputs), std::move(outputs))
+)   :   Node(std::string(OnnxName), std::move(inputs), std::move(outputs))
     ,   kernel_shape_(std::move(kernel_shape))
     ,   strides_(std::move(strides))
     ,   pads_(std::move(pads))
@@ -159,7 +159,7 @@ Conv::Conv(std::vector<std::string> inputs,
 {}
 
 void Conv::REGISTER_METHOD_NAME() {
-    NodeFactory::Register(std::string(Name), CreateConv);
+    NodeFactory::Register(std::string(OnnxName), CreateConv);
 }
 
 

@@ -6,12 +6,12 @@ namespace graph {
 
 Graph::Graph(const onnx::GraphProto& onnx_graph)
 {
-    const auto& onnx_input = onnx_graph.input();
-    const auto& onnx_output = onnx_graph.output();
+    const auto& onnx_input    = onnx_graph.input();
+    const auto& onnx_output   = onnx_graph.output();
     const auto& onnx_internal = onnx_graph.initializer();
 
-    input_.reserve(onnx_input.size());
-    output_.reserve(onnx_output.size());
+    input_  .reserve(onnx_input.size());
+    output_ .reserve(onnx_output.size());
     tensors_.reserve(onnx_input.size() + onnx_output.size() + onnx_internal.size());
 
     for (const auto& onnx_input_tensor: onnx_input)

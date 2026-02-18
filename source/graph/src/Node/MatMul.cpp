@@ -15,17 +15,17 @@ static std::unique_ptr<Node> CreateMatMul(const onnx::NodeProto& onnx_node) {
 std::unique_ptr<Node> MatMul::create(std::vector<std::string> inputs, 
     std::vector<std::string> outputs
 ) {
-    detail::CheckSize( inputs.size(),  INPUTS_SIZE, std::string(Name),  "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(Name), "output parametrs");
+    detail::CheckSize( inputs.size(),  INPUTS_SIZE, std::string(OnnxName),  "input parametrs");
+    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
     return std::unique_ptr<MatMul>(new MatMul(std::move(inputs), std::move(outputs)));
 }
 
 MatMul::MatMul(std::vector<std::string> inputs, std::vector<std::string> outputs)
-    :   Node(std::string(Name), std::move(inputs), std::move(outputs))
+    :   Node(std::string(OnnxName), std::move(inputs), std::move(outputs))
 {}
 
 void MatMul::REGISTER_METHOD_NAME() {
-    NodeFactory::Register(std::string(Name), CreateMatMul);
+    NodeFactory::Register(std::string(OnnxName), CreateMatMul);
 }
 
 }
