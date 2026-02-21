@@ -124,7 +124,7 @@ const std::vector<std::string>& Graph::getOutputs()                 const noexce
     return pimpl_->output;
 }
 
-const Tensor& Graph::getTensor(const std::string& name) {
+const Tensor& Graph::getTensor(const std::string& name) const {
     return pimpl_->tensors.at(name);
 }
 

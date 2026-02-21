@@ -113,7 +113,7 @@ std::optional<std::vector<std::string>> GetStringsAttribute(const onnx::NodeProt
         );
     }
     
-    return std::vector<std::string>(attr->strings().begin(), attr->strings().end());;
+    return std::vector<std::string>(attr->strings().begin(), attr->strings().end());
 }
 
 }
