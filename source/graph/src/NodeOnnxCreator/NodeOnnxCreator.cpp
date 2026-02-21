@@ -80,12 +80,12 @@ Node CreateGemm(const onnx::NodeProto& onnx_node) {
         betta = 1;
     }
 
-    auto transA = detail::GetFloatAttribute(onnx_node, "transA");
+    auto transA = detail::GetIntAttribute(onnx_node, "transA");
     if (!transA.has_value()) {
         transA = 0;
     }
 
-    auto transB = detail::GetFloatAttribute(onnx_node, "transB");
+    auto transB = detail::GetIntAttribute(onnx_node, "transB");
     if (!transB.has_value()) {
         transB = 0;
     }
