@@ -1,9 +1,10 @@
 #pragma once
 
-#include <unordered_map>
+#include <istream>
+#include <vector>
+#include <string>
 #include <memory>
-
-#include <onnx/onnx-ml.pb.h>
+#include <unordered_map>
 
 #include "graph/Tensor.hpp"
 #include "graph/Node/Node.hpp"
@@ -15,25 +16,30 @@ class Graph {
 
 public:
 
-    explicit Graph(const onnx::GraphProto& onnx_graph);
+    Graph();
+    ~Graph();
 
-    [[nodiscard]] const std::vector<std::unique_ptr<Node>>&      getNodes  () const noexcept;
+    Graph(const Graph&);
+    Graph& operator=(const Graph&);
+
+    Graph(Graph&&) noexcept;
+    Graph& operator=(Graph&&) noexcept;
+
+    void LoadFromOnnx(std::istream& input_onnx);
+
+    [[nodiscard]] const std::vector<Node>&                       getNodes  () const noexcept;
     [[nodiscard]] const std::unordered_map<std::string, Tensor>& getTensors() const noexcept;
     [[nodiscard]] const std::vector<std::string>&                getInputs () const noexcept;
     [[nodiscard]] const std::vector<std::string>&                getOutputs() const noexcept;
 
-    [[nodiscard]] const Tensor& getTensor(const std::string& name) const noexcept;
+    [[nodiscard]] const Tensor& getTensor(const std::string& name) const;
 
 private:
-
-    std::unordered_map<std::string, Tensor> tensors_;
-    
-    std::vector<std::unique_ptr<Node>> nodes_;
-    
-    std::vector<std::string> input_;
-    std::vector<std::string> output_;
+    struct Impl;
+    std::unique_ptr<Impl> pimpl_;
     
 };
 
 }
+
 }

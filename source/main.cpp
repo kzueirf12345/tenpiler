@@ -2,11 +2,12 @@
 #include <fstream>
 #include <iostream>
 
-#include <onnx/onnx-ml.pb.h>
 #include <stdexcept>
 
 #include "graph/Graph.hpp"
 #include "utils/concole.hpp"
+
+#include <onnx/onnx-ml.pb.h>
 
 //TODO generator onnx files
 //TODO graphiz
@@ -15,9 +16,10 @@
 
 int main() try {
     onnx::ModelProto model;
-    std::ifstream input("models/mnist-8.onnx", std::ios::binary);
+    // std::ifstream input("models/mnist-8.onnx", std::ios::binary);
+    std::ifstream input1("models/tensor_compiler_test.onnx", std::ios::binary);
     
-    if (!model.ParseFromIstream(&input)) {
+    if (!model.ParseFromIstream(&input1)) {
         std::cerr << "Failed to parse ONNX file" << std::endl;
         return EXIT_FAILURE;
     }
@@ -38,20 +40,31 @@ int main() try {
         std::cerr << std::endl;
     }
 
-    const tenpiler::graph::Graph graph(onnx_graph);
+    std::ifstream input2("models/tensor_compiler_test.onnx", std::ios::binary);
+    tenpiler::graph::Graph graph;
+    graph.LoadFromOnnx(input2);
 
     for (size_t i = 0; i < std::min(10ul, graph.getNodes().size()); ++i) {
         const auto& node = graph.getNodes()[i];
-        std::cout << "Node " << i << ": " << node->sayMyName() 
-                  << " | Inputs: " << node->getInputs().size()
-                  << " | Outputs: " << node->getOutputs().size() << std::endl;
+        std::cout << "Node " << i << ": " << node.sayMyName() 
+                  << " | Inputs: " << node.getInputs().size()
+                  << " | Outputs: " << node.getOutputs().size() << std::endl;
         std::cerr << "output: ";
-        for (const auto& elem : node->getOutputs()) {
+        for (const auto& elem : node.getOutputs()) {
             std::cerr << elem << "";
         }
         std::cerr << std::endl;
     }
     
+    std::cout << std::endl << std::endl << "Graph test" << std::endl;
+
+    for (size_t i = 0; i < std::min(10ul, graph.getNodes().size()); ++i) {
+        const auto& node = graph.getNodes()[i];
+        node.draw();
+        std::cerr << std::endl;
+    }
+    
+
     return EXIT_SUCCESS;
 }
 catch(const std::runtime_error& e) {

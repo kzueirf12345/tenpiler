@@ -1,9 +1,10 @@
 add_library(graph STATIC
-    src/Tensor.cpp
-    src/NodeFactory.cpp
     src/Graph.cpp
 
-    src/Node/Node.cpp
+    src/TensorOnnxCreator/TensorOnnxCreator.cpp
+    src/NodeOnnxCreator/NodeOnnxCreator.cpp
+    src/NodeOnnxCreator/NodeFactory.cpp
+
     src/Node/Add.cpp
     src/Node/Conv.cpp
     src/Node/Gemm.cpp
@@ -19,6 +20,7 @@ target_include_directories(graph
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/lib
 )
 
 target_link_libraries(graph PRIVATE project_warnings)

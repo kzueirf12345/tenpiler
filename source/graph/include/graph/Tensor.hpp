@@ -1,8 +1,8 @@
 #pragma once
 
-#include <onnx/onnx-ml.pb.h>
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 namespace tenpiler {
 namespace graph {
@@ -32,11 +32,6 @@ public:
     };
 
     Type type = Tensor::Type::Unknown;
-
-public:
-
-    Tensor(const onnx::ValueInfoProto& onnx_tensor);
-    Tensor(const onnx::TensorProto&    onnx_tensor);
 };
 
 }

@@ -1,4 +1,4 @@
-#include "graph/Node/Node.hpp"
+#include "graph/Node/Ops.hpp"
 
 #include "graph/Node/utils.hpp"
 #include "utils/common.hpp"
@@ -25,57 +25,8 @@ Conv::PadType Conv::ParseAutoPad(std::string_view str_auto_pad) {
     return Conv::PadType::NotSet;
 }
 
-static std::unique_ptr<Node> CreateConv(const onnx::NodeProto& onnx_node) {
-    std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
-    std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
-    
-    auto kernel_shape = detail::GetIntsAttribute(onnx_node, "kernel_shape");
-    if (!kernel_shape.has_value()) {
-        utils::THROW(
-            "tenpiler::graph::Conv can't create from onnx_node without kernel shape"
-        );
-    }
 
-    auto strides = detail::GetIntsAttribute(onnx_node, "strides");
-    if (!strides.has_value()) {
-        strides = std::vector<uint64_t>(kernel_shape->size(), 1);
-    }
-    
-    auto dilations = detail::GetIntsAttribute(onnx_node, "dilations");
-    if (!dilations.has_value()) {
-        dilations = std::vector<uint64_t>(kernel_shape->size(), 1);
-    }
-
-    auto groups = detail::GetIntAttribute(onnx_node, "group");
-    if (!groups.has_value()) {
-        groups = 1;
-    }
-
-    const auto auto_pad_str = detail::GetStringAttribute(onnx_node, "auto_pad");
-    const auto pads_opt = detail::GetIntsAttribute(onnx_node, "pads");
-    Conv::PadType auto_pad = Conv::PadType::NotSet;
-    std::vector<uint64_t> pads{};
-
-    if (auto_pad_str.has_value()) {
-        auto_pad = Conv::ParseAutoPad(*auto_pad_str);
-    }
-
-    if (pads_opt.has_value()) {
-        pads = std::move(*pads_opt);
-    }
-    else if (auto_pad == Conv::PadType::NotSet) {
-        pads = std::vector<uint64_t>(kernel_shape->size() * 2, 0);
-    } 
-    else {
-        assert(pads.empty());
-    }
-
-    return Conv::create(std::move(inputs), std::move(outputs), std::move(*kernel_shape), 
-        std::move(*strides), std::move(pads), std::move(*dilations), *groups, auto_pad
-    );
-}
-
-std::unique_ptr<Node> Conv::create(
+Conv Conv::create(
     std::vector<std::string> inputs, 
     std::vector<std::string> outputs,
     std::vector<uint64_t> kernel_shape,
@@ -135,10 +86,10 @@ std::unique_ptr<Node> Conv::create(
         utils::THROW("Conv groups must be >= 1, but has " + std::to_string(groups));
     }
 
-    return std::unique_ptr<Conv>(new Conv(
+    return Conv(
         std::move(inputs), std::move(outputs), std::move(kernel_shape), std::move(strides), 
         std::move(pads), std::move(dilations), groups, auto_pad
-    ));
+    );
 }
 
 Conv::Conv(std::vector<std::string> inputs, 
@@ -149,7 +100,7 @@ Conv::Conv(std::vector<std::string> inputs,
            std::vector<uint64_t> dilations,
            uint64_t groups ,
            PadType auto_pad
-)   :   Node(std::string(OnnxName), std::move(inputs), std::move(outputs))
+)   :    meta_({std::string(OnnxName), std::move(inputs), std::move(outputs)})
     ,   kernel_shape_(std::move(kernel_shape))
     ,   strides_(std::move(strides))
     ,   pads_(std::move(pads))
@@ -157,10 +108,6 @@ Conv::Conv(std::vector<std::string> inputs,
     ,   groups_(groups)
     ,   auto_pad_(auto_pad)
 {}
-
-void Conv::REGISTER_METHOD_NAME() {
-    NodeFactory::Register(std::string(OnnxName), CreateConv);
-}
 
 
 }

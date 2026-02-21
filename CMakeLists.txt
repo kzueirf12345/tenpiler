@@ -75,6 +75,7 @@ set_target_properties(onnx::onnx_proto PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${ONNX_INCLUDE_DIR}"
 )
 
+
 ###===========================================SUBDIRECTORY==========================================
 
 add_subdirectory(source/graph)
