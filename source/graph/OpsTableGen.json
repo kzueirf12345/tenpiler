@@ -1,0 +1,72 @@
+{
+  "namespace": "tenpiler::graph",
+  "include_guard": "TENPILER_GRAPH_OPS_AUTO_HPP",
+  "operations": [
+    {
+      "name": "Add",
+      "onnx_name": "Add",
+      "inputs": { "min": 2, "max": 2 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    },
+    {
+      "name": "Conv",
+      "onnx_name": "Conv",
+      "inputs": { "min": 2, "max": 3 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": [
+        {
+          "name": "kernel_shape",
+          "type": "std::vector<uint64_t>",
+          "default": null
+        },
+        {
+          "name": "strides",
+          "type": "std::vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "pads",
+          "type": "std::vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "dilations",
+          "type": "std::vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "groups",
+          "type": "uint64_t",
+          "default": "1"
+        },
+        {
+          "name": "auto_pad",
+          "type": "enum",
+          "enum_name": "PadType",
+          "enum_values": ["NotSet", "SameUpper", "SameLower", "Valid"],
+          "default": "NotSet"
+        }
+      ]
+    },
+    {
+      "name": "Gemm",
+      "onnx_name": "Gemm",
+      "inputs": { "min": 2, "max": 3 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": [
+        { "name": "alpha", "type": "float", "default": "1.0f" },
+        { "name": "beta", "type": "float", "default": "1.0f" },
+        { "name": "transA", "type": "bool", "default": "false" },
+        { "name": "transB", "type": "bool", "default": "false" }
+      ]
+    },
+    {
+      "name": "Relu",
+      "onnx_name": "Relu",
+      "inputs": { "min": 1, "max": 1 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    }
+  ]
+}
