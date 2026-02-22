@@ -4,7 +4,8 @@ from generator import \
     load_json, \
     generate_hpp, \
     generate_cpp, \
-    generate_node_onnx_creator_hpp
+    generate_node_onnx_creator_hpp, \
+    generate_op_table_hpp
         
 if __name__ == "__main__":
     args = parse_arguments()
@@ -31,6 +32,12 @@ if __name__ == "__main__":
             node_onnx_creator_dir_path / (node_onnx_creator_dir_path.name + ".hpp"),
             args.verbose
         )
+        generate_op_table_hpp(
+            data,
+            node_onnx_creator_dir_path / ("MAP_" + node_onnx_creator_dir_path.name + ".hpp"),
+            args.verbose
+        )
+        
 
     if args.verbose:
         print("Генерация завершена успешно!")

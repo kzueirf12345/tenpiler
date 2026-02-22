@@ -28,14 +28,11 @@ public:
 
 private:
 
-    static constexpr auto registry_ = 
+    inline static constexpr auto registry_ = 
         frozen::make_unordered_map<frozen::string, Node (*)(const onnx::NodeProto&)>({
-            { Add   ::OnnxName, CreateAdd    },
-            { Conv  ::OnnxName, CreateConv   },
-            { Gemm  ::OnnxName, CreateGemm   },
-            { MatMul::OnnxName, CreateMatMul },
-            { Mul   ::OnnxName, CreateMul    },
-            { Relu  ::OnnxName, CreateRelu   },
+
+#include "MAP_NodeOnnxCreator.hpp"
+
         });
 
 };

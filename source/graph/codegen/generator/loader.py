@@ -54,7 +54,7 @@ def parse_arguments():
         "-f", "--node_onnx_creator",
         type=str,
         required=False,
-        default="./source/graph/src/GENERATE_NodeOnnxCreator/",
+        default="./source/graph/src/NodeOnnxCreator/",
         metavar="NODE_FACTORY_DIR",
         help="Выходная директория для .cpp и .hpp файлов создания узлов из ONNX "
              "(по умолчанию: ./source/graph/src/GENERATE_NodeOnnxCreator/)"

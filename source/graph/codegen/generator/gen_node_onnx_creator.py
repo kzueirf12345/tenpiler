@@ -42,3 +42,25 @@ def generate_node_onnx_creator_hpp(data, output_path, verbose=False):
 
     if verbose:
         print(f"Хедер записан!")
+        
+def generate_op_table_hpp(data, output_path, verbose=False):
+    if verbose:
+        print(f"Генерация вспомогательного хэдера для автоматической инициалиации реестра нод...")
+        
+    generated_code = \
+        "// Сгенерированный файл\n" \
+        "// Не редактировать вручную\n" \
+        "\n"
+        
+    operations = data["operations"]
+            
+    for op_num in range(len(operations)):
+        op = operations[op_num]
+        generated_code += f"{{{op['name']}::OnnxName, Create{op['name']}}},\n"
+            
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(generated_code)
+
+    if verbose:
+        print(f"Хедер записан!")
+        
