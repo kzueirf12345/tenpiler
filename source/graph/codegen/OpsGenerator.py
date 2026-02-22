@@ -34,7 +34,7 @@ def parse_arguments():
         "-s", "--source_directory",
         type=str,
         required=False,
-        default="./source/graph/src/GenerateNode",
+        default="./source/graph/src/Node",
         metavar="SOURCE_DIR",
         help="Выходная папка для .cpp реализаций операций (по умолчанию: "
              "./source/graph/src/Node)"
@@ -49,7 +49,6 @@ def parse_arguments():
     args = parser.parse_args()
 
     return args
-
 
 def validate_paths(args):
     input_path = Path(args.input)
@@ -87,7 +86,6 @@ def validate_paths(args):
         sys.exit(1)
 
     return input_path, output_path, source_dir_path
-
 
 def load_json(path, verbose=False):
     if verbose:
@@ -303,9 +301,7 @@ def generate_hpp(data, output_path, verbose=False):
 
 def generate_op_impl(op_desc, verbose=False):
     name = op_desc["name"]
-    onnx_name = op_desc["onnx_name"]
-    inputs = op_desc["inputs"]
-    outputs = op_desc["outputs"]
+    constraints = op_desc.get("constraints", [])
     attributes = op_desc.get("attributes", [])
     
     def generate_enum_attrs():
@@ -315,7 +311,7 @@ def generate_op_impl(op_desc, verbose=False):
             return ""
         
         impl = \
-            "#define RET_STR_TO_ENUM_(enum_name, field_name)".ljust(RIGHT_BORDER) + "\\\n" \
+            "#define RET_STR_TO_ENUM_(enum_name, field_name)".ljust(RIGHT_BORDER - 1) + "\\\n" \
             "    do {".ljust(RIGHT_BORDER + 1) + "\\\n" \
             "        if (str == #field_name) {".ljust(RIGHT_BORDER + 1) + "\\\n" \
            f"            return {name}::enum_name::field_name;".ljust(RIGHT_BORDER + 1) + "\\\n" \
@@ -379,8 +375,55 @@ def generate_op_impl(op_desc, verbose=False):
     impl += \
         f"{name} {name}::create(\n" \
       + create_args_str + "\n" \
-        ") {\n" \
-        "\t// TODO codegen this\n" \
+        ") {\n" 
+        
+    impl += \
+        "\tdetail::CheckSize(\n" \
+        "\t\tinputs.size(),\n" \
+        "\t\tMIN_INPUTS_SIZE,\n" \
+        "\t\tMAX_INPUTS_SIZE,\n" \
+        "\t\tstd::string(OnnxName),\n" \
+        "\t\t\"input parametrs\"\n" \
+        "\t);\n" \
+        "\tdetail::CheckSize(\n" \
+        "\t\toutputs.size(),\n" \
+        "\t\tMIN_OUTPUTS_SIZE,\n" \
+        "\t\tMAX_OUTPUTS_SIZE,\n" \
+        "\t\tstd::string(OnnxName),\n" \
+        "\t\t\"outputs parametrs\"\n" \
+        "\t);\n" \
+        "\n"
+        
+    for inv in constraints:
+        inv_type = inv["type"]
+        
+        impl += \
+            f"\tif ({inv['condition']}) {{\n" \
+        
+        if inv_type == "check":
+            impl += \
+                "\t\tutils::THROW(\n" \
+                "\t\t\t\"" + inv["description"] + "\"\n" \
+                "\t\t);\n"
+        elif inv_type == "set_default":
+            impl += f"\t\t{inv['attr_name']} = {inv['value']};\n"
+        else:
+            print(f"Ошибка: Неизвестный тип инварианта: {inv_type}", file=sys.stderr)
+            sys.exit(1)
+            
+        impl += \
+            "\t}\n" \
+            "\n"
+        
+    def join_with_leading_sep(items, sep):
+        return (sep + sep.join(items)) if items else ""
+        
+    impl += \
+        f"\treturn {name}(\n" \
+        "\t\tstd::move(inputs),\n" \
+        "\t\tstd::move(outputs)" \
+      + join_with_leading_sep([f"std::move({attr['name']})" for attr in attributes], ",\n\t\t") + "\n" \
+        "\t);\n" \
         "}\n" \
         "\n"
     
@@ -397,6 +440,8 @@ def generate_cpp(data, source_dir_path, verbose=False):
         "// Не редактировать вручную\n" \
         "\n" \
         "#include \"graph/Node/Ops.hpp\"\n" \
+        "\n" \
+        "#include <cmath>\n" \
         "\n" \
         "#include \"graph/Node/utils.hpp\"\n" \
         "#include \"utils/common.hpp\"\n" \
