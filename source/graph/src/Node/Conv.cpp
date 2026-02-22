@@ -6,7 +6,7 @@
 namespace tenpiler {
 namespace graph {
 
-Conv::PadType Conv::ParseAutoPad(std::string_view str_auto_pad) {
+Conv::PadType Conv::ParsePadType(std::string_view str_auto_pad) {
     if (str_auto_pad == "NOTSET") {
         return Conv::PadType::NotSet;
     }
@@ -37,7 +37,7 @@ Conv Conv::create(
     Conv::PadType auto_pad
 ) {
     detail::CheckSize(inputs.size(), MIN_INPUTS_SIZE, MAX_INPUTS_SIZE, std::string(OnnxName), "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
+    detail::CheckSize(outputs.size(), MIN_OUTPUTS_SIZE, MAX_OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
 
     if (kernel_shape.empty()) {
         utils::THROW(

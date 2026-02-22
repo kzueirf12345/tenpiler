@@ -17,7 +17,7 @@ Gemm Gemm::create(
     bool transB
 ) {
     detail::CheckSize(inputs.size(), MIN_INPUTS_SIZE, MAX_INPUTS_SIZE, std::string(OnnxName), "input parametrs");
-    detail::CheckSize(outputs.size(), OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
+    detail::CheckSize(outputs.size(), MIN_OUTPUTS_SIZE, MAX_OUTPUTS_SIZE, std::string(OnnxName), "output parametrs");
 
     if (std::isnan(alpha)) {
         utils::THROW("Gemm alpha is NaN");

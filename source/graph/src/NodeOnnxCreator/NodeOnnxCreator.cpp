@@ -48,7 +48,7 @@ Node CreateConv(const onnx::NodeProto& onnx_node) {
     std::vector<uint64_t> pads{};
 
     if (auto_pad_str.has_value()) {
-        auto_pad = Conv::ParseAutoPad(*auto_pad_str);
+        auto_pad = Conv::ParsePadType(*auto_pad_str);
     }
 
     if (pads_opt.has_value()) {
