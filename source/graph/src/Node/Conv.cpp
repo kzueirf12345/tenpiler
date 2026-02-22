@@ -6,23 +6,32 @@
 namespace tenpiler {
 namespace graph {
 
-Conv::PadType Conv::ParsePadType(std::string_view str_auto_pad) {
-    if (str_auto_pad == "NOTSET") {
-        return Conv::PadType::NotSet;
+#define RET_STR_TO_ENUM_(enum_name, field_name) \
+do { \
+    if (str == #field_name) { \
+        return Conv::enum_name::field_name; \
+    } \
+} while(false)
+
+Conv::PadType Conv::ParsePadType(std::string_view str) {
+    RET_STR_TO_ENUM_(PadType, NOTSET);
+
+    if (str == "NOTSET") {
+        return Conv::PadType::NOTSET;
     }
-    if (str_auto_pad == "SAME_UPPER") {
-        return Conv::PadType::SameUpper;
+    if (str == "SAME_UPPER") {
+        return Conv::PadType::SAME_UPPER;
     }
-    if (str_auto_pad == "SAME_LOWER") {
-        return Conv::PadType::SameLower;
+    if (str == "SAME_LOWER") {
+        return Conv::PadType::SAME_LOWER;
     }
-    if (str_auto_pad == "VALID") {
-        return Conv::PadType::Valid;
+    if (str == "VALID") {
+        return Conv::PadType::VALID;
     }
 
     utils::THROW("Unknown auto_pad str");
 
-    return Conv::PadType::NotSet;
+    return Conv::PadType::NOTSET;
 }
 
 
@@ -56,11 +65,11 @@ Conv Conv::create(
     }
 
     if (pads.empty()) {
-        if (auto_pad == PadType::NotSet) {
+        if (auto_pad == PadType::NOTSET) {
             pads = std::vector<uint64_t>(kernel_shape.size() * 2, 0);
         }
     } 
-    else if (auto_pad != PadType::NotSet) {
+    else if (auto_pad != PadType::NOTSET) {
         utils::THROW("Conv can't have both auto_pad != NOTSET and non-empty pads");
     }
     else if (pads.size() != 2 * kernel_shape.size()) {
@@ -92,14 +101,15 @@ Conv Conv::create(
     );
 }
 
-Conv::Conv(std::vector<std::string> inputs, 
-           std::vector<std::string> outputs,
-           std::vector<uint64_t> kernel_shape,
-           std::vector<uint64_t> strides,
-           std::vector<uint64_t> pads,
-           std::vector<uint64_t> dilations,
-           uint64_t groups ,
-           PadType auto_pad
+Conv::Conv(
+    std::vector<std::string> inputs, 
+    std::vector<std::string> outputs,
+    std::vector<uint64_t> kernel_shape,
+    std::vector<uint64_t> strides,
+    std::vector<uint64_t> pads,
+    std::vector<uint64_t> dilations,
+    uint64_t groups ,
+    PadType auto_pad
 )   :    meta_({std::string(OnnxName), std::move(inputs), std::move(outputs)})
     ,   kernel_shape_(std::move(kernel_shape))
     ,   strides_(std::move(strides))

@@ -44,7 +44,7 @@ Node CreateConv(const onnx::NodeProto& onnx_node) {
 
     const auto auto_pad_str = detail::GetStringAttribute(onnx_node, "auto_pad");
     const auto pads_opt = detail::GetIntsAttribute(onnx_node, "pads");
-    Conv::PadType auto_pad = Conv::PadType::NotSet;
+    Conv::PadType auto_pad = Conv::PadType::NOTSET;
     std::vector<uint64_t> pads{};
 
     if (auto_pad_str.has_value()) {
@@ -54,7 +54,7 @@ Node CreateConv(const onnx::NodeProto& onnx_node) {
     if (pads_opt.has_value()) {
         pads = std::move(*pads_opt);
     }
-    else if (auto_pad == Conv::PadType::NotSet) {
+    else if (auto_pad == Conv::PadType::NOTSET) {
         pads = std::vector<uint64_t>(kernel_shape->size() * 2, 0);
     } 
     else {

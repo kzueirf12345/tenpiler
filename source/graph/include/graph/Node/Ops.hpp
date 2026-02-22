@@ -101,10 +101,10 @@ public:
 public:
 
 	 enum class PadType {
-		NotSet,
-		SameUpper,
-		SameLower,
-		Valid,
+		NOTSET,
+		SAME_UPPER,
+		SAME_LOWER,
+		VALID,
 	};
 
 	static Conv::PadType ParsePadType(std::string_view str);
@@ -120,7 +120,7 @@ public:
 		std::vector<uint64_t> pads,
 		std::vector<uint64_t> dilations,
 		uint64_t groups = 1,
-		Conv::PadType auto_pad = PadType::NotSet
+		Conv::PadType auto_pad = PadType::NOTSET
 	);
 
 private:
@@ -133,7 +133,7 @@ private:
 		std::vector<uint64_t> pads,
 		std::vector<uint64_t> dilations,
 		uint64_t groups = 1,
-		Conv::PadType auto_pad = PadType::NotSet
+		Conv::PadType auto_pad = PadType::NOTSET
 	);
 
 private:

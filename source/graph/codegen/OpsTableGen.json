@@ -50,8 +50,8 @@
           "name": "auto_pad",
           "type": "enum",
           "enum_name": "PadType",
-          "enum_values": ["NotSet", "SameUpper", "SameLower", "Valid"],
-          "default": "NotSet"
+          "enum_values": ["NOTSET", "SAME_UPPER", "SAME_LOWER", "VALID"],
+          "default": "NOTSET"
         }
       ]
     },
