@@ -64,20 +64,8 @@ def generate_op_impl(op_desc, verbose=False):
     impl = \
         f"{name}::{name}(\n" \
       + create_args_str + "\n" \
-        ")\t:\tmeta_({std::string(OnnxName), std::move(inputs), std::move(outputs)})\n"
-    
-    for attr in attributes:
-        attr_name = attr["name"]
-        impl += f"\t,\t{attr_name}_(std::move({attr_name}))\n"
-    
-    impl += \
-        "{}\n" \
-        "\n"
-    
-    impl += \
-        f"{name} {name}::create(\n" \
-      + create_args_str + "\n" \
-        ") {\n" 
+        ")\t:\tmeta_({std::string(OnnxName), {}, {}})\n" \
+        "{\n"
         
     impl += \
         "\tdetail::CheckSize(\n" \
@@ -87,6 +75,7 @@ def generate_op_impl(op_desc, verbose=False):
         "\t\tstd::string(OnnxName),\n" \
         "\t\t\"input parametrs\"\n" \
         "\t);\n" \
+        "\n" \
         "\tdetail::CheckSize(\n" \
         "\t\toutputs.size(),\n" \
         "\t\tMIN_OUTPUTS_SIZE,\n" \
@@ -116,13 +105,17 @@ def generate_op_impl(op_desc, verbose=False):
         impl += \
             "\t}\n" \
             "\n"
-        
+    
     impl += \
-        f"\treturn {name}(\n" \
-        "\t\tstd::move(inputs),\n" \
-        "\t\tstd::move(outputs)" \
-      + join_with_leading_sep([f"std::move({attr['name']})" for attr in attributes], ",\n\t\t") + "\n" \
-        "\t);\n" \
+        "\tmeta_.inputs = std::move(inputs);\n" \
+        "\tmeta_.outputs = std::move(outputs);\n" \
+    
+    for attr in attributes:
+        attr_name = attr["name"]
+        impl += f"\t{attr_name}_ = std::move({attr_name});\n"
+      
+    impl += \
+        "\n" \
         "}\n" \
         "\n"
     

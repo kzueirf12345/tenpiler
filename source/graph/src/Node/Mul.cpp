@@ -14,13 +14,8 @@ namespace graph {
 Mul::Mul(
 	std::vector<std::string> inputs,
 	std::vector<std::string> outputs
-)	:	meta_({std::string(OnnxName), std::move(inputs), std::move(outputs)})
-{}
-
-Mul Mul::create(
-	std::vector<std::string> inputs,
-	std::vector<std::string> outputs
-) {
+)	:	meta_({std::string(OnnxName), {}, {}})
+{
 	detail::CheckSize(
 		inputs.size(),
 		MIN_INPUTS_SIZE,
@@ -36,10 +31,9 @@ Mul Mul::create(
 		"outputs parametrs"
 	);
 
-	return Mul(
-		std::move(inputs),
-		std::move(outputs)
-	);
+	meta_.inputs = std::move(inputs);
+	meta_.outputs = std::move(outputs);
+
 }
 
 } // namespace graph

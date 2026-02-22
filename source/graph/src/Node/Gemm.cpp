@@ -18,21 +18,8 @@ Gemm::Gemm(
 	float betta,
 	bool transA,
 	bool transB
-)	:	meta_({std::string(OnnxName), std::move(inputs), std::move(outputs)})
-	,	alpha_(std::move(alpha))
-	,	betta_(std::move(betta))
-	,	transA_(std::move(transA))
-	,	transB_(std::move(transB))
-{}
-
-Gemm Gemm::create(
-	std::vector<std::string> inputs,
-	std::vector<std::string> outputs,
-	float alpha,
-	float betta,
-	bool transA,
-	bool transB
-) {
+)	:	meta_({std::string(OnnxName), {}, {}})
+{
 	detail::CheckSize(
 		inputs.size(),
 		MIN_INPUTS_SIZE,
@@ -72,14 +59,13 @@ Gemm Gemm::create(
 		);
 	}
 
-	return Gemm(
-		std::move(inputs),
-		std::move(outputs),
-		std::move(alpha),
-		std::move(betta),
-		std::move(transA),
-		std::move(transB)
-	);
+	meta_.inputs = std::move(inputs);
+	meta_.outputs = std::move(outputs);
+	alpha_ = std::move(alpha);
+	betta_ = std::move(betta);
+	transA_ = std::move(transA);
+	transB_ = std::move(transB);
+
 }
 
 } // namespace graph

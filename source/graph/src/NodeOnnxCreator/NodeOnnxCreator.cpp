@@ -13,7 +13,7 @@ Node CreateAdd(const onnx::NodeProto& onnx_node) {
     std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
     std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
 
-    return Add::create(std::move(inputs), std::move(outputs));
+    return Add(std::move(inputs), std::move(outputs));
 }
 
 Node CreateConv(const onnx::NodeProto& onnx_node) {
@@ -61,7 +61,7 @@ Node CreateConv(const onnx::NodeProto& onnx_node) {
         assert(pads.empty());
     }
 
-    return Conv::create(std::move(inputs), std::move(outputs), std::move(*kernel_shape), 
+    return Conv(std::move(inputs), std::move(outputs), std::move(*kernel_shape), 
         std::move(*strides), std::move(pads), std::move(*dilations), *groups, auto_pad
     );
 }
@@ -91,28 +91,28 @@ Node CreateGemm(const onnx::NodeProto& onnx_node) {
     }
 
 
-    return Gemm::create(std::move(inputs), std::move(outputs), *alpha, *betta, *transA, *transB);
+    return Gemm(std::move(inputs), std::move(outputs), *alpha, *betta, *transA, *transB);
 }
 
 Node CreateMatMul(const onnx::NodeProto& onnx_node) {
     std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
     std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
 
-    return MatMul::create(std::move(inputs), std::move(outputs));
+    return MatMul(std::move(inputs), std::move(outputs));
 }
 
 Node CreateMul(const onnx::NodeProto& onnx_node) {
     std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
     std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
 
-    return Mul::create(std::move(inputs), std::move(outputs));
+    return Mul(std::move(inputs), std::move(outputs));
 }
 
 Node CreateRelu(const onnx::NodeProto& onnx_node) {
     std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
     std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
 
-    return Relu::create(std::move(inputs), std::move(outputs));
+    return Relu(std::move(inputs), std::move(outputs));
 }
 
 

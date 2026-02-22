@@ -20,25 +20,8 @@ Conv::Conv(
 	std::vector<uint64_t> dilations,
 	uint64_t groups,
 	Conv::PadType auto_pad
-)	:	meta_({std::string(OnnxName), std::move(inputs), std::move(outputs)})
-	,	kernel_shape_(std::move(kernel_shape))
-	,	strides_(std::move(strides))
-	,	pads_(std::move(pads))
-	,	dilations_(std::move(dilations))
-	,	groups_(std::move(groups))
-	,	auto_pad_(std::move(auto_pad))
-{}
-
-Conv Conv::create(
-	std::vector<std::string> inputs,
-	std::vector<std::string> outputs,
-	std::vector<uint64_t> kernel_shape,
-	std::vector<uint64_t> strides,
-	std::vector<uint64_t> pads,
-	std::vector<uint64_t> dilations,
-	uint64_t groups,
-	Conv::PadType auto_pad
-) {
+)	:	meta_({std::string(OnnxName), {}, {}})
+{
 	detail::CheckSize(
 		inputs.size(),
 		MIN_INPUTS_SIZE,
@@ -102,16 +85,15 @@ Conv Conv::create(
 		);
 	}
 
-	return Conv(
-		std::move(inputs),
-		std::move(outputs),
-		std::move(kernel_shape),
-		std::move(strides),
-		std::move(pads),
-		std::move(dilations),
-		std::move(groups),
-		std::move(auto_pad)
-	);
+	meta_.inputs = std::move(inputs);
+	meta_.outputs = std::move(outputs);
+	kernel_shape_ = std::move(kernel_shape);
+	strides_ = std::move(strides);
+	pads_ = std::move(pads);
+	dilations_ = std::move(dilations);
+	groups_ = std::move(groups);
+	auto_pad_ = std::move(auto_pad);
+
 }
 
 #define RET_STR_TO_ENUM_(enum_name, field_name)                                                    \

@@ -81,12 +81,6 @@ def generate_op_decl(op_desc, verbose=False):
         "\n" \
         "public:\n" \
         "\n" \
-        f"\tstatic {name} create(\n" \
-      + create_args_str + "\n"\
-        "\t);\n" \
-        "\n" \
-        "private:\n" \
-        "\n" \
         f"\t{name}(\n" \
       + create_args_str + "\n" \
         "\t);\n" \

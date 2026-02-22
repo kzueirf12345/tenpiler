@@ -33,13 +33,6 @@ public:
 
 public:
 
-	static Add create(
-		std::vector<std::string> inputs,
-		std::vector<std::string> outputs
-	);
-
-private:
-
 	Add(
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs
@@ -66,13 +59,6 @@ public:
 
 
 public:
-
-	static Mul create(
-		std::vector<std::string> inputs,
-		std::vector<std::string> outputs
-	);
-
-private:
 
 	Mul(
 		std::vector<std::string> inputs,
@@ -111,19 +97,6 @@ public:
 
 
 public:
-
-	static Conv create(
-		std::vector<std::string> inputs,
-		std::vector<std::string> outputs,
-		std::vector<uint64_t> kernel_shape,
-		std::vector<uint64_t> strides,
-		std::vector<uint64_t> pads,
-		std::vector<uint64_t> dilations,
-		uint64_t groups = 1,
-		Conv::PadType auto_pad = PadType::NOTSET
-	);
-
-private:
 
 	Conv(
 		std::vector<std::string> inputs,
@@ -167,17 +140,6 @@ public:
 
 public:
 
-	static Gemm create(
-		std::vector<std::string> inputs,
-		std::vector<std::string> outputs,
-		float alpha = 1.0f,
-		float betta = 1.0f,
-		bool transA = false,
-		bool transB = false
-	);
-
-private:
-
 	Gemm(
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs,
@@ -216,13 +178,6 @@ public:
 
 public:
 
-	static Relu create(
-		std::vector<std::string> inputs,
-		std::vector<std::string> outputs
-	);
-
-private:
-
 	Relu(
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs
@@ -249,13 +204,6 @@ public:
 
 
 public:
-
-	static MatMul create(
-		std::vector<std::string> inputs,
-		std::vector<std::string> outputs
-	);
-
-private:
 
 	MatMul(
 		std::vector<std::string> inputs,
