@@ -1,8 +1,8 @@
 #pragma once
 
-#include "graph/Node/Node.hpp"
 #include <onnx/onnx-ml.pb.h>
 
+#include "graph/Node/Node.hpp"
 
 namespace tenpiler {
 namespace graph {

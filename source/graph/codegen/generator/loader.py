@@ -39,6 +39,16 @@ def parse_arguments():
     )
     
     parser.add_argument(
+        "-f", "--node_onnx_creator",
+        type=str,
+        required=False,
+        default="./source/graph/src/GENERATE_NodeOnnxCreator/",
+        metavar="NODE_FACTORY_DIR",
+        help="Имя выходного файла для .cpp и .hpp для функций создания узлов из onnx (по умолчанию: "
+             "./source/graph/src/NodeOnnxCreator)"
+    )
+    
+    parser.add_argument(
         "-v", "--verbose",
         action="store_true",
         help="Включить подробный вывод процесса генерации"
@@ -52,6 +62,7 @@ def validate_paths(args):
     input_path = Path(args.input)
     output_path = Path(args.output)
     source_dir_path = Path(args.source_directory)
+    node_onnx_creator_dir_path = Path(args.node_onnx_creator)
 
     if not input_path.exists():
         print(f"Ошибка: Входной файл не найден: {input_path}", file=sys.stderr)
@@ -82,8 +93,18 @@ def validate_paths(args):
         print(f"Ошибка: Выходная директория не существует: {source_dir_path}", 
               file=sys.stderr)
         sys.exit(1)
+        
+    if not node_onnx_creator_dir_path.is_dir():
+        print("Ошибка: Путь к выходной директории onnx_creator не является директорией: "
+              f"{node_onnx_creator_dir_path}", file=sys.stderr)
+        sys.exit(1)
+        
+    if not node_onnx_creator_dir_path.exists():
+        print("Ошибка: Выходная директория onnx_creator не существует: "
+              f"{node_onnx_creator_dir_path}", file=sys.stderr)
+        sys.exit(1)
 
-    return input_path, output_path, source_dir_path
+    return input_path, output_path, source_dir_path, node_onnx_creator_dir_path
 
 def load_json(path, verbose=False):
     if verbose:

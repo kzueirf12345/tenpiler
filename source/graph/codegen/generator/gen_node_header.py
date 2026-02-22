@@ -149,3 +149,6 @@ def generate_hpp(data, output_path, verbose=False):
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(generated_code)
+        
+    if verbose:
+        print(f"Хедер записан!")
