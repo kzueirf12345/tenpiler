@@ -8,6 +8,18 @@ def parse_arguments():
         description="Ops header generator",
     )
 
+    # === Режим генерации ===
+    parser.add_argument(
+        "-m", "--mode",
+        type=str,
+        required=False,
+        default="all",
+        choices=["all", "node_header", "node_onnx_creator", "node_sources"],
+        metavar="MODE",
+        help="Режим генерации: all, node_header, node_onnx_creator, node_sources "
+             "(по умолчанию: all)"
+    )
+
     parser.add_argument(
         "-i", "--input",
         type=str,
@@ -15,7 +27,7 @@ def parse_arguments():
         default="./source/graph/codegen/OpsTableGen.json",
         metavar="INPUT_FILE",
         help="Входной JSON файл с описанием классов операций "
-             "(по умолчанию: ./source/graph/OpsTableGen.json)"
+             "(по умолчанию: ./source/graph/codegen/OpsTableGen.json)"
     )
 
     parser.add_argument(
@@ -44,8 +56,8 @@ def parse_arguments():
         required=False,
         default="./source/graph/src/GENERATE_NodeOnnxCreator/",
         metavar="NODE_FACTORY_DIR",
-        help="Имя выходного файла для .cpp и .hpp для функций создания узлов из onnx (по умолчанию: "
-             "./source/graph/src/NodeOnnxCreator)"
+        help="Выходная директория для .cpp и .hpp файлов создания узлов из ONNX "
+             "(по умолчанию: ./source/graph/src/GENERATE_NodeOnnxCreator/)"
     )
     
     parser.add_argument(
@@ -75,34 +87,37 @@ def validate_paths(args):
     if input_path.suffix != ".json":
         print(f"Предупреждение: Входной файл не имеет расширения .json", file=sys.stderr)
 
-    if output_path.suffix != ".hpp":
-        print(f"Предупреждение: Выходной файл не имеет расширения .hpp", file=sys.stderr)
+    if args.mode in ["all", "node_header"]:
+        if output_path.suffix != ".hpp":
+            print(f"Предупреждение: Выходной файл не имеет расширения .hpp", file=sys.stderr)
 
-    output_dir = output_path.parent
-    if not output_dir.exists():
-        print(f"Ошибка: Директория для выходного файла не существует: {output_dir}", 
-              file=sys.stderr)
-        sys.exit(1)
+        output_dir = output_path.parent
+        if not output_dir.exists():
+            print(f"Ошибка: Директория для выходного файла не существует: {output_dir}", 
+                  file=sys.stderr)
+            sys.exit(1)
         
-    if not source_dir_path.is_dir():
-        print(f"Ошибка: Путь к выходной директории не является директорией: {source_dir_path}", 
-              file=sys.stderr)
-        sys.exit(1)
+    if args.mode in ["all", "node_sources"]:
+        if not source_dir_path.is_dir():
+            print(f"Ошибка: Путь к выходной директории не является директорией: {source_dir_path}", 
+                  file=sys.stderr)
+            sys.exit(1)
+            
+        if not source_dir_path.exists():
+            print(f"Ошибка: Выходная директория не существует: {source_dir_path}", 
+                  file=sys.stderr)
+            sys.exit(1)
         
-    if not source_dir_path.exists():
-        print(f"Ошибка: Выходная директория не существует: {source_dir_path}", 
-              file=sys.stderr)
-        sys.exit(1)
-        
-    if not node_onnx_creator_dir_path.is_dir():
-        print("Ошибка: Путь к выходной директории onnx_creator не является директорией: "
-              f"{node_onnx_creator_dir_path}", file=sys.stderr)
-        sys.exit(1)
-        
-    if not node_onnx_creator_dir_path.exists():
-        print("Ошибка: Выходная директория onnx_creator не существует: "
-              f"{node_onnx_creator_dir_path}", file=sys.stderr)
-        sys.exit(1)
+    if args.mode in ["all", "node_onnx_creator"]:
+        if not node_onnx_creator_dir_path.is_dir():
+            print("Ошибка: Путь к выходной директории onnx_creator не является директорией: "
+                  f"{node_onnx_creator_dir_path}", file=sys.stderr)
+            sys.exit(1)
+            
+        if not node_onnx_creator_dir_path.exists():
+            print("Ошибка: Выходная директория onnx_creator не существует: "
+                  f"{node_onnx_creator_dir_path}", file=sys.stderr)
+            sys.exit(1)
 
     return input_path, output_path, source_dir_path, node_onnx_creator_dir_path
 
