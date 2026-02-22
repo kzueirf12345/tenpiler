@@ -1,5 +1,7 @@
 #pragma once
 
+#include "graph/Graph.hpp"
+#include "graph/Tensor.hpp"
 #include <cstddef>
 #include <optional>
 #include <string>
@@ -26,6 +28,9 @@ std::optional<int64_t>                  GetIntAttribute(
 std::optional<float>                    GetFloatAttribute(
     const onnx::NodeProto& node, std::string_view name
 );
+std::optional<std::vector<float>>       GetFloatsAttribute(
+    const onnx::NodeProto& node, std::string_view name
+);
 std::optional<std::vector<uint64_t>>    GetIntsAttribute(
     const onnx::NodeProto& node, std::string_view name
 );
@@ -33,6 +38,18 @@ std::optional<std::string>              GetStringAttribute(
     const onnx::NodeProto& node, std::string_view name
 );
 std::optional<std::vector<std::string>> GetStringsAttribute(
+    const onnx::NodeProto& node, std::string_view name
+);
+std::optional<Tensor>                   GetTensorAttribute(
+    const onnx::NodeProto& node, std::string_view name
+);
+std::optional<std::vector<Tensor>>      GetTensorsAttribute(
+    const onnx::NodeProto& node, std::string_view name
+);
+std::optional<Graph>                   GetGraphAttribute(
+    const onnx::NodeProto& node, std::string_view name
+);
+std::optional<std::vector<Graph>>      GetGraphsAttribute(
     const onnx::NodeProto& node, std::string_view name
 );
 
