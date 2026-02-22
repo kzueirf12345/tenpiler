@@ -3,7 +3,6 @@
 #include <istream>
 #include <vector>
 #include <string>
-#include <memory>
 #include <unordered_map>
 
 #include "graph/Tensor.hpp"
@@ -17,13 +16,13 @@ class Graph {
 public:
 
     Graph();
-    ~Graph();
 
-    Graph(const Graph&);
-    Graph& operator=(const Graph&);
-
-    Graph(Graph&&) noexcept;
-    Graph& operator=(Graph&&) noexcept;
+    Graph(
+        std::unordered_map<std::string, Tensor> tensors,
+        std::vector<Node> nodes,
+        std::vector<std::string> input,
+        std::vector<std::string> output
+    );
 
     void LoadFromOnnx(std::istream& input_onnx);
 
@@ -35,8 +34,13 @@ public:
     [[nodiscard]] const Tensor& getTensor(const std::string& name) const;
 
 private:
-    struct Impl;
-    std::unique_ptr<Impl> pimpl_;
+
+    std::unordered_map<std::string, Tensor> tensors_;
+    
+    std::vector<Node> nodes_;
+    
+    std::vector<std::string> input_;
+    std::vector<std::string> output_;
     
 };
 

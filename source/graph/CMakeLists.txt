@@ -4,6 +4,7 @@ add_library(graph STATIC
     src/TensorOnnxCreator/TensorOnnxCreator.cpp
     src/NodeOnnxCreator/NodeOnnxCreator.cpp
     src/NodeOnnxCreator/NodeFactory.cpp
+    src/GraphOnnxCreator/GraphOnnxCreator.cpp
 
     src/Node/Add.cpp
     src/Node/Conv.cpp

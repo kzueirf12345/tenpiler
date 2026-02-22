@@ -13,6 +13,7 @@
 //TODO graphiz
 //TODO backtrace in THROW
 //TODO соси хуйка (by твой сокомандник Арсений Шелонини Б01-411)
+//TODO remove create node
 
 int main() try {
     onnx::ModelProto model;
