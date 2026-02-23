@@ -67,6 +67,60 @@ public:
 
 };
 
+class Sub {
+
+private:
+
+	NodeMeta meta_;
+
+public:
+
+	[[nodiscard]] const NodeMeta& meta() const noexcept { return meta_; }
+
+	static constexpr std::string_view OnnxName = "Sub";
+
+	static constexpr size_t MIN_INPUTS_SIZE  = 2;
+	static constexpr size_t MAX_INPUTS_SIZE  = 2;
+	static constexpr size_t MIN_OUTPUTS_SIZE = 1;
+	static constexpr size_t MAX_OUTPUTS_SIZE = 1;
+
+
+public:
+
+	Sub(
+		std::vector<std::string> inputs,
+		std::vector<std::string> outputs
+	);
+
+};
+
+class Div {
+
+private:
+
+	NodeMeta meta_;
+
+public:
+
+	[[nodiscard]] const NodeMeta& meta() const noexcept { return meta_; }
+
+	static constexpr std::string_view OnnxName = "Div";
+
+	static constexpr size_t MIN_INPUTS_SIZE  = 2;
+	static constexpr size_t MAX_INPUTS_SIZE  = 2;
+	static constexpr size_t MIN_OUTPUTS_SIZE = 1;
+	static constexpr size_t MAX_OUTPUTS_SIZE = 1;
+
+
+public:
+
+	Div(
+		std::vector<std::string> inputs,
+		std::vector<std::string> outputs
+	);
+
+};
+
 class Conv {
 
 private:
@@ -117,6 +171,59 @@ private:
 	std::vector<uint64_t> dilations_;
 	uint64_t groups_;
 	PadType auto_pad_;
+
+};
+
+class MaxPool {
+
+private:
+
+	NodeMeta meta_;
+
+public:
+
+	[[nodiscard]] const NodeMeta& meta() const noexcept { return meta_; }
+
+	static constexpr std::string_view OnnxName = "MaxPool";
+
+	static constexpr size_t MIN_INPUTS_SIZE  = 1;
+	static constexpr size_t MAX_INPUTS_SIZE  = 1;
+	static constexpr size_t MIN_OUTPUTS_SIZE = 1;
+	static constexpr size_t MAX_OUTPUTS_SIZE = 1;
+
+public:
+
+	 enum class PadType {
+		NOTSET,
+		SAME_UPPER,
+		SAME_LOWER,
+		VALID,
+	};
+
+	static MaxPool::PadType ParsePadType(std::string_view str);
+
+
+public:
+
+	MaxPool(
+		std::vector<std::string> inputs,
+		std::vector<std::string> outputs,
+		std::vector<uint64_t> kernel_shape,
+		std::vector<uint64_t> strides = {},
+		std::vector<uint64_t> pads = {},
+		std::vector<uint64_t> dilations = {},
+		PadType auto_pad = PadType::NOTSET,
+		bool ceil_mode = false
+	);
+
+private:
+
+	std::vector<uint64_t> kernel_shape_;
+	std::vector<uint64_t> strides_;
+	std::vector<uint64_t> pads_;
+	std::vector<uint64_t> dilations_;
+	PadType auto_pad_;
+	bool ceil_mode_;
 
 };
 

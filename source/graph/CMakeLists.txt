@@ -6,13 +6,9 @@ add_library(graph STATIC
     src/NodeOnnxCreator/NodeFactory.cpp
     src/GraphOnnxCreator/GraphOnnxCreator.cpp
 
-    src/Node/Add.cpp
-    src/Node/Conv.cpp
-    src/Node/Gemm.cpp
-    src/Node/MatMul.cpp
-    src/Node/Mul.cpp
-    src/Node/Relu.cpp
+    src/Node/Node.cpp
     src/Node/utils.cpp
+    src/Node/OpsDumb.cpp
 )
 
 target_include_directories(graph

@@ -60,10 +60,8 @@ int main() try {
 
     for (size_t i = 0; i < std::min(10ul, graph.getNodes().size()); ++i) {
         const auto& node = graph.getNodes()[i];
-        node.draw();
-        std::cerr << std::endl;
+        std::cout << node.getDot() << std::endl;
     }
-    
 
     return EXIT_SUCCESS;
 }

@@ -3,6 +3,8 @@
 
 #include "NodeOnnxCreator.hpp"
 
+#include <string>
+
 #include <onnx/onnx-ml.pb.h>
 
 #include "graph/Node/utils.hpp"
@@ -27,6 +29,26 @@ Node CreateMul(const onnx::NodeProto& onnx_node) {
 	std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
 
 	return Mul(
+		std::move(inputs),
+		std::move(outputs)
+	);
+}
+
+Node CreateSub(const onnx::NodeProto& onnx_node) {
+	std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
+	std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
+
+	return Sub(
+		std::move(inputs),
+		std::move(outputs)
+	);
+}
+
+Node CreateDiv(const onnx::NodeProto& onnx_node) {
+	std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
+	std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
+
+	return Div(
 		std::move(inputs),
 		std::move(outputs)
 	);
@@ -83,6 +105,60 @@ Node CreateConv(const onnx::NodeProto& onnx_node) {
 		std::move(dilations),
 		std::move(groups),
 		std::move(auto_pad)
+	);
+}
+
+Node CreateMaxPool(const onnx::NodeProto& onnx_node) {
+	std::vector<std::string> inputs (onnx_node. input().begin(), onnx_node. input().end());
+	std::vector<std::string> outputs(onnx_node.output().begin(), onnx_node.output().end());
+
+	const auto kernel_shape_opt = detail::GetIntsAttribute(onnx_node, "kernel_shape");
+	if (!kernel_shape_opt.has_value()) {
+		utils::THROW(
+			"MaxPool can't create from onnx_node without kernel_shape"
+		);
+	}
+	const std::vector<uint64_t> kernel_shape = *kernel_shape_opt;
+
+	const auto strides_opt = detail::GetIntsAttribute(onnx_node, "strides");
+	std::vector<uint64_t> strides = {};
+	if (strides_opt.has_value()) {
+		strides = *strides_opt;
+	}
+
+	const auto pads_opt = detail::GetIntsAttribute(onnx_node, "pads");
+	std::vector<uint64_t> pads = {};
+	if (pads_opt.has_value()) {
+		pads = *pads_opt;
+	}
+
+	const auto dilations_opt = detail::GetIntsAttribute(onnx_node, "dilations");
+	std::vector<uint64_t> dilations = {};
+	if (dilations_opt.has_value()) {
+		dilations = *dilations_opt;
+	}
+
+	const auto auto_pad_opt = detail::GetStringAttribute(onnx_node, "auto_pad");
+	MaxPool::PadType auto_pad = MaxPool::PadType::NOTSET;
+	if (auto_pad_opt.has_value()) {
+		auto_pad = MaxPool::ParsePadType(*auto_pad_opt);
+	}
+
+	const auto ceil_mode_opt = detail::GetIntAttribute(onnx_node, "ceil_mode");
+	bool ceil_mode = false;
+	if (ceil_mode_opt.has_value()) {
+		ceil_mode = *ceil_mode_opt;
+	}
+
+	return MaxPool(
+		std::move(inputs),
+		std::move(outputs),
+		std::move(kernel_shape),
+		std::move(strides),
+		std::move(pads),
+		std::move(dilations),
+		std::move(auto_pad),
+		std::move(ceil_mode)
 	);
 }
 

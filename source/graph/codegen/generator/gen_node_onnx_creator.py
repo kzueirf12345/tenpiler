@@ -142,6 +142,8 @@ def generate_node_onnx_creator_cpp(data, output_path, verbose=False):
         "\n" \
         "#include \"NodeOnnxCreator.hpp\"\n" \
         "\n" \
+        "#include <string>\n" \
+        "\n" \
         "#include <onnx/onnx-ml.pb.h>\n" \
         "\n" \
         "#include \"graph/Node/utils.hpp\"\n" \

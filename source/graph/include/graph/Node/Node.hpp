@@ -5,7 +5,7 @@
 #include <vector>
 #include <concepts>
 
-#include "graph/Node/OpsDump.hpp"
+#include "graph/Node/OpsDumb.hpp"
 #include "graph/Node/NodeMeta.hpp"
 
 namespace tenpiler {
@@ -28,7 +28,7 @@ private:
         virtual const std::vector<std::string>& getInputs () const noexcept = 0;
         virtual const std::vector<std::string>& getOutputs() const noexcept = 0;
 
-        virtual void draw() const = 0;
+        virtual std::string_view getDot() const = 0;
 
         virtual std::unique_ptr<Concept> clone() const = 0;
     };
@@ -49,8 +49,8 @@ private:
         [[nodiscard]] const std::vector<std::string>& getInputs  () const noexcept override { return node_instance.meta().inputs;  }
         [[nodiscard]] const std::vector<std::string>& getOutputs () const noexcept override { return node_instance.meta().outputs; }
 
-        void draw() const override {
-            dump::draw_impl(node_instance);
+        std::string_view getDot() const override {
+            return dump::GetDot(node_instance);
         }
     };
 
@@ -83,7 +83,7 @@ public:
     [[nodiscard]] const std::vector<std::string>& getInputs () const noexcept { return pImpl->getInputs (); }
     [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept { return pImpl->getOutputs(); }
     
-    void draw() const { pImpl->draw(); }
+    std::string_view getDot() const { return pImpl->getDot(); }
 };
 
 }

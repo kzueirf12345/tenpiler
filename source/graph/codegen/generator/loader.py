@@ -5,7 +5,7 @@ from pathlib import Path
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="Ops header generator",
+        description="Node description generator",
     )
 
     # === Режим генерации ===
@@ -14,9 +14,9 @@ def parse_arguments():
         type=str,
         required=False,
         default="all",
-        choices=["all", "node_header", "node_onnx_creator", "node_sources"],
+        choices=["all", "node_header", "node_onnx_creator", "node_source", "node_dumb"],
         metavar="MODE",
-        help="Режим генерации: all, node_header, node_onnx_creator, node_sources "
+        help="Режим генерации: all, node_header, node_onnx_creator, node_source, node_dumb "
              "(по умолчанию: all)"
     )
 
@@ -31,7 +31,7 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "-o", "--output",
+        "-nh", "--node_header",
         type=str,
         required=False,
         default="./source/graph/include/graph/Node/Ops.hpp",
@@ -41,13 +41,13 @@ def parse_arguments():
     )
     
     parser.add_argument(
-        "-s", "--source_directory",
+        "-ns", "--node_source",
         type=str,
         required=False,
-        default="./source/graph/src/Node",
-        metavar="SOURCE_DIR",
-        help="Выходная папка для .cpp реализаций операций (по умолчанию: "
-             "./source/graph/src/Node)"
+        default="./source/graph/src/Node/Node.cpp",
+        metavar="OUTPUT_FILE",
+        help="Выходной файл .cpp c реализацией операций (по умолчанию: "
+             "./source/graph/src/Node/Node.cpp)"
     )
     
     parser.add_argument(
@@ -55,9 +55,29 @@ def parse_arguments():
         type=str,
         required=False,
         default="./source/graph/src/NodeOnnxCreator/",
-        metavar="NODE_FACTORY_DIR",
+        metavar="OUTPUT_DIR",
         help="Выходная директория для .cpp и .hpp файлов создания узлов из ONNX "
              "(по умолчанию: ./source/graph/src/GENERATE_NodeOnnxCreator/)"
+    )
+    
+    parser.add_argument(
+        "-dnh", "--node_header_dumb",
+        type=str,
+        required=False,
+        default="./source/graph/include/graph/Node/OpsDumb.hpp",
+        metavar="OUTPUT_FILE",
+        help="Выходной файл функций дампа .hpp для сгенерированного кода (по умолчанию: "
+             "./source/graph/include/graph/Node/OpsDumb.hpp)"
+    )
+    
+    parser.add_argument(
+        "-dns", "--node_source_dumb",
+        type=str,
+        required=False,
+        default="./source/graph/src/Node/OpsDumb.cpp",
+        metavar="OUTPUT_FILE",
+        help="Выходной файл функций дампа .cpp c реализацией (по умолчанию: "
+             "./source/graph/src/Node/OpsDumb.cpp)"
     )
     
     parser.add_argument(
@@ -72,8 +92,10 @@ def parse_arguments():
 
 def validate_paths(args):
     input_path = Path(args.input)
-    output_path = Path(args.output)
-    source_dir_path = Path(args.source_directory)
+    node_header_path = Path(args.node_header)
+    node_source_path = Path(args.node_source)
+    node_header_dumb_path = Path(args.node_header_dumb)
+    node_source_dumb_path = Path(args.node_source_dumb)
     node_onnx_creator_dir_path = Path(args.node_onnx_creator)
 
     if not input_path.exists():
@@ -88,23 +110,42 @@ def validate_paths(args):
         print(f"Предупреждение: Входной файл не имеет расширения .json", file=sys.stderr)
 
     if args.mode in ["all", "node_header"]:
-        if output_path.suffix != ".hpp":
+        if node_header_path.suffix != ".hpp":
             print(f"Предупреждение: Выходной файл не имеет расширения .hpp", file=sys.stderr)
 
-        output_dir = output_path.parent
+        output_dir = node_header_path.parent
         if not output_dir.exists():
             print(f"Ошибка: Директория для выходного файла не существует: {output_dir}", 
                   file=sys.stderr)
             sys.exit(1)
         
-    if args.mode in ["all", "node_sources"]:
-        if not source_dir_path.is_dir():
-            print(f"Ошибка: Путь к выходной директории не является директорией: {source_dir_path}", 
+    if args.mode in ["all", "node_source"]:
+        if node_source_path.suffix != ".cpp":
+            print(f"Предупреждение: Выходной файл не имеет расширения .cpp", file=sys.stderr)
+
+        output_dir = node_source_path.parent
+        if not output_dir.exists():
+            print(f"Ошибка: Директория для выходного файла не существует: {output_dir}", 
                   file=sys.stderr)
             sys.exit(1)
             
-        if not source_dir_path.exists():
-            print(f"Ошибка: Выходная директория не существует: {source_dir_path}", 
+    if args.mode in ["all", "node_header_dumb"]:
+        if node_header_dumb_path.suffix != ".hpp":
+            print(f"Предупреждение: Выходной файл не имеет расширения .hpp", file=sys.stderr)
+
+        output_dir = node_header_dumb_path.parent
+        if not output_dir.exists():
+            print(f"Ошибка: Директория для выходного файла не существует: {output_dir}", 
+                  file=sys.stderr)
+            sys.exit(1)
+        
+    if args.mode in ["all", "node_source_dumb"]:
+        if node_source_dumb_path.suffix != ".cpp":
+            print(f"Предупреждение: Выходной файл не имеет расширения .cpp", file=sys.stderr)
+
+        output_dir = node_source_dumb_path.parent
+        if not output_dir.exists():
+            print(f"Ошибка: Директория для выходного файла не существует: {output_dir}", 
                   file=sys.stderr)
             sys.exit(1)
         
@@ -119,7 +160,8 @@ def validate_paths(args):
                   f"{node_onnx_creator_dir_path}", file=sys.stderr)
             sys.exit(1)
 
-    return input_path, output_path, source_dir_path, node_onnx_creator_dir_path
+    return input_path, node_header_path, node_source_path, node_header_dumb_path, \
+        node_source_dumb_path, node_onnx_creator_dir_path
 
 def load_json(path, verbose=False):
     if verbose:

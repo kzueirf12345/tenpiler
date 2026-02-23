@@ -123,11 +123,11 @@ def generate_op_impl(op_desc, verbose=False):
     
     return impl
 
-def generate_cpp(data, source_dir_path, verbose=False):
+def generate_cpp(data, output_path, verbose=False):
     if verbose:
         print(f"Генерация сорцов...")
 
-    hat_code = \
+    generated_code = \
         "// Сгенерированный файл\n" \
         "// Не редактировать вручную\n" \
         "\n" \
@@ -142,29 +142,23 @@ def generate_cpp(data, source_dir_path, verbose=False):
     namespaces = data["namespace"].split("::")
     
     for namespace in namespaces:
-        hat_code += f"namespace {namespace} {{\n"
+        generated_code += f"namespace {namespace} {{\n"
     
-    hat_code += "\n"
-    
-    boots_code = ""
-    for namespace in reversed(namespaces):
-        boots_code += f"}} // namespace {namespace}\n"
+    generated_code += "\n"
     
     operations = data["operations"]
     for op_num in range(len(operations)):
-        if verbose:
-            print(f"{op_num + 1}: ", end="")
-            
         operation = operations[op_num]
-        output_path = source_dir_path / (operation["name"] + ".cpp")
+        generated_code += generate_op_impl(operation, verbose)
         
-        generated_code = generate_op_impl(operations[op_num], verbose)
+    for namespace in reversed(namespaces):
+        generated_code += f"}} // namespace {namespace}\n"
     
-        if verbose:
-            print(f"Запись результата в: {output_path}")
+    if verbose:
+        print(f"Запись результата в: {output_path}")
 
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(hat_code + generated_code + boots_code)
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(generated_code)
             
     if verbose:
         print(f"Сорцы записаны!")
