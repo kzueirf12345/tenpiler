@@ -19,7 +19,7 @@ Conv::Conv(
 	std::vector<uint64_t> pads,
 	std::vector<uint64_t> dilations,
 	uint64_t groups,
-	Conv::PadType auto_pad
+	PadType auto_pad
 )	:	meta_({std::string(OnnxName), {}, {}})
 {
 	detail::CheckSize(
@@ -29,6 +29,7 @@ Conv::Conv(
 		std::string(OnnxName),
 		"input parametrs"
 	);
+
 	detail::CheckSize(
 		outputs.size(),
 		MIN_OUTPUTS_SIZE,

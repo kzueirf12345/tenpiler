@@ -29,17 +29,17 @@
         {
           "name": "strides",
           "type": "vector<uint64_t>",
-          "default": null
+          "default": "[]"
         },
         {
           "name": "pads",
           "type": "vector<uint64_t>",
-          "default": null
+          "default": "[]"
         },
         {
           "name": "dilations",
           "type": "vector<uint64_t>",
-          "default": null
+          "default": "[]"
         },
         {
           "name": "groups",

@@ -5,7 +5,9 @@ from generator import \
     generate_hpp, \
     generate_cpp, \
     generate_node_onnx_creator_hpp, \
-    generate_op_table_hpp
+    generate_op_table_hpp, \
+    generate_node_onnx_creator_cpp
+    
         
 if __name__ == "__main__":
     args = parse_arguments()
@@ -35,6 +37,11 @@ if __name__ == "__main__":
         generate_op_table_hpp(
             data,
             node_onnx_creator_dir_path / ("MAP_" + node_onnx_creator_dir_path.name + ".hpp"),
+            args.verbose
+        )
+        generate_node_onnx_creator_cpp(
+            data,
+            node_onnx_creator_dir_path / (node_onnx_creator_dir_path.name + ".cpp"),
             args.verbose
         )
         

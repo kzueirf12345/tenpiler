@@ -23,6 +23,7 @@ Mul::Mul(
 		std::string(OnnxName),
 		"input parametrs"
 	);
+
 	detail::CheckSize(
 		outputs.size(),
 		MIN_OUTPUTS_SIZE,

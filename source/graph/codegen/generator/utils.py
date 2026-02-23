@@ -1,6 +1,6 @@
 RIGHT_BORDER = 100
 
-def get_cpp_type(attr, op_name):
+def get_cpp_type(attr):
     SIMPLE_TYPES = {
         "uint8_t"   : "uint8_t",   
         "uint16_t"  : "uint16_t",
@@ -27,11 +27,11 @@ def get_cpp_type(attr, op_name):
     
     if raw_type == "enum":
         enum_name = attr.get("enum_name")
-        return f"{op_name}::{enum_name}"
+        return f"{enum_name}"
     
     return map_simple(raw_type)
 
-def format_default_value(attr):
+def get_default_value(attr):
     value = attr["default"]
     if value is None:
         return None
@@ -46,3 +46,25 @@ def format_default_value(attr):
 def join_with_leading_sep(items, sep):
     return (sep + sep.join(items)) if items else ""
 
+def get_attr_name(attr_type):
+    SIMPLE_TYPES = {
+        "int64_t": "Int",
+        "uint64_t": "Int",
+        "bool": "Int",
+        "float": "Float",
+        "string": "String",
+        "enum": "String",
+        "Tensor": "Tensor",
+        "Graph": "Graph",
+    }
+    
+    if attr_type.startswith("vector<") and attr_type.endswith(">"):
+        inner_type = attr_type[7:-1] 
+        if inner_type in SIMPLE_TYPES:
+            return SIMPLE_TYPES[inner_type] + "s"
+        raise ValueError(f"Неподдерживаемый тип вектора: vector<{inner_type}>")
+    
+    if attr_type in SIMPLE_TYPES:
+        return SIMPLE_TYPES[attr_type]
+    
+    raise ValueError(f"Неподдерживаемый тип атрибута: {attr_type}")

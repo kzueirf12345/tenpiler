@@ -55,7 +55,7 @@ def generate_op_impl(op_desc, verbose=False):
         "\tstd::vector<std::string> outputs"
         
     for attr in attributes:
-        attr_type = get_cpp_type(attr, name)
+        attr_type = get_cpp_type(attr)
         attr_name = attr["name"]
         
         create_args_str += ",\n" \

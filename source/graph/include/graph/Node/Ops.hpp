@@ -102,11 +102,11 @@ public:
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs,
 		std::vector<uint64_t> kernel_shape,
-		std::vector<uint64_t> strides,
-		std::vector<uint64_t> pads,
-		std::vector<uint64_t> dilations,
+		std::vector<uint64_t> strides = {},
+		std::vector<uint64_t> pads = {},
+		std::vector<uint64_t> dilations = {},
 		uint64_t groups = 1,
-		Conv::PadType auto_pad = PadType::NOTSET
+		PadType auto_pad = PadType::NOTSET
 	);
 
 private:
@@ -116,7 +116,7 @@ private:
 	std::vector<uint64_t> pads_;
 	std::vector<uint64_t> dilations_;
 	uint64_t groups_;
-	Conv::PadType auto_pad_;
+	PadType auto_pad_;
 
 };
 

@@ -1,4 +1,4 @@
-from .utils import get_cpp_type, format_default_value
+from .utils import get_cpp_type, get_default_value
 
 def generate_op_decl(op_desc, verbose=False):
     name = op_desc["name"]
@@ -67,9 +67,9 @@ def generate_op_decl(op_desc, verbose=False):
         "\t\tstd::vector<std::string> outputs" 
         
     for attr in attributes:
-        attr_type = get_cpp_type(attr, name)
+        attr_type = get_cpp_type(attr)
         attr_name = attr["name"]
-        attr_default = format_default_value(attr)
+        attr_default = get_default_value(attr)
         
         create_args_str += ",\n" \
             f"\t\t{attr_type} {attr_name}"
@@ -92,7 +92,7 @@ def generate_op_decl(op_desc, verbose=False):
             "\n"
             
         for attr in attributes:
-            attr_type = get_cpp_type(attr, name)
+            attr_type = get_cpp_type(attr)
             attr_name = attr["name"]
             
             decl += f"\t{attr_type} {attr_name}_;\n"

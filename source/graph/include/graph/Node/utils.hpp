@@ -22,7 +22,7 @@ void CheckSize(size_t size, size_t min_req_size, size_t max_req_size,
 const onnx::AttributeProto*             GetAttribute(
     const onnx::NodeProto& onnx_node, std::string_view name
 );
-std::optional<int64_t>                  GetIntAttribute(
+std::optional<uint64_t>                  GetIntAttribute(
     const onnx::NodeProto& node, std::string_view name
 );
 std::optional<float>                    GetFloatAttribute(

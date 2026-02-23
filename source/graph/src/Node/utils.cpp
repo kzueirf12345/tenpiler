@@ -46,7 +46,7 @@ const onnx::AttributeProto* GetAttribute(const onnx::NodeProto& onnx_node, std::
     return nullptr;
 }
 
-std::optional<int64_t> GetIntAttribute(const onnx::NodeProto& node, std::string_view name)
+std::optional<uint64_t> GetIntAttribute(const onnx::NodeProto& node, std::string_view name)
 {
     const auto* attr = GetAttribute(node, name);
     if (!attr) return std::nullopt;
@@ -58,6 +58,21 @@ std::optional<int64_t> GetIntAttribute(const onnx::NodeProto& node, std::string_
     }
     
     return attr->i();
+}
+
+std::optional<std::vector<uint64_t>> GetIntsAttribute(const onnx::NodeProto& node, 
+    std::string_view name)
+{
+    const auto* attr = GetAttribute(node, name);
+    if (!attr) return std::nullopt;
+    
+    if (!attr->has_type() || attr->type() != onnx::AttributeProto::INTS) {
+        utils::THROW(
+            "Attribute '" + std::string(name) + "' has wrong type (expected INTS)"
+        );
+    }
+    
+    return std::vector<uint64_t>(attr->ints().begin(), attr->ints().end());
 }
 
 std::optional<float> GetFloatAttribute(const onnx::NodeProto& node, std::string_view name)
@@ -86,21 +101,6 @@ std::optional<std::vector<float>> GetFloatsAttribute(const onnx::NodeProto& node
     }
     
     return std::vector<float>(attr->floats().begin(), attr->floats().end());
-}
-
-std::optional<std::vector<uint64_t>> GetIntsAttribute(const onnx::NodeProto& node, 
-    std::string_view name)
-{
-    const auto* attr = GetAttribute(node, name);
-    if (!attr) return std::nullopt;
-    
-    if (!attr->has_type() || attr->type() != onnx::AttributeProto::INTS) {
-        utils::THROW(
-            "Attribute '" + std::string(name) + "' has wrong type (expected INTS)"
-        );
-    }
-    
-    return std::vector<uint64_t>(attr->ints().begin(), attr->ints().end());
 }
 
 std::optional<std::string> GetStringAttribute(const onnx::NodeProto& node, std::string_view name)
