@@ -9,10 +9,11 @@
 
 #include <onnx/onnx-ml.pb.h>
 
-//TODO generator onnx files
 //TODO graphiz
 //TODO backtrace in THROW
 //TODO соси хуйка (by твой сокомандник Арсений Шелонини Б01-411)
+//TODO switch uint to int
+//TODO downlaoad tests and test
 
 int main() try {
     onnx::ModelProto model;
