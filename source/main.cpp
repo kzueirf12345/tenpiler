@@ -4,7 +4,10 @@
 
 #include <stdexcept>
 
+#include "RLogSU/logger.hpp"
+
 #include "graph/Graph.hpp"
+#include "graph/Dumber.hpp"
 #include "utils/concole.hpp"
 
 #include <onnx/onnx-ml.pb.h>
@@ -36,10 +39,16 @@ int main() try {
                   << " | Outputs: " << node.output_size() << std::endl;
         std::cerr << "output: ";
         for (const auto& elem : node.output()) {
-            std::cerr << elem << "";
+            std::cerr << elem << " ";
+        }
+        std::cerr << "\ninput: ";
+        for (const auto& elem : node.input()) {
+            std::cerr << elem << " ";
         }
         std::cerr << std::endl;
     }
+
+    std::cout << std::endl << std::endl;
 
     std::ifstream input2("models/tensor_compiler_test.onnx", std::ios::binary);
     tenpiler::graph::Graph graph;
@@ -52,17 +61,31 @@ int main() try {
                   << " | Outputs: " << node.getOutputs().size() << std::endl;
         std::cerr << "output: ";
         for (const auto& elem : node.getOutputs()) {
-            std::cerr << elem << "";
+            std::cerr << elem << " ";
+        }
+        std::cerr << "\ninput: ";
+        for (const auto& elem : node.getInputs()) {
+            std::cerr << elem << " ";
         }
         std::cerr << std::endl;
     }
     
+    std::cerr << "All tensors:\n";
+    for (const auto& [name, tensor] : graph.getTensors())
+    {
+        std::cerr << name << " ";
+    }
+    std::cerr << std::endl;
+
+
     std::cout << std::endl << std::endl << "Graph test" << std::endl;
 
     for (size_t i = 0; i < std::min(10ul, graph.getNodes().size()); ++i) {
         const auto& node = graph.getNodes()[i];
         std::cout << node.getDot() << std::endl;
     }
+
+    RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
 
     return EXIT_SUCCESS;
 }

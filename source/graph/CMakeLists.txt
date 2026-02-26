@@ -1,5 +1,6 @@
 add_library(graph STATIC
     src/Graph.cpp
+    src/Dumber.cpp    
 
     src/TensorOnnxCreator/TensorOnnxCreator.cpp
     src/NodeOnnxCreator/NodeOnnxCreator.cpp
@@ -27,7 +28,8 @@ if(TARGET project_sanitizers)
 endif()
 
 target_link_libraries(graph 
-PRIVATE 
+PRIVATE
+    RLogSU
     utils
 )
 
