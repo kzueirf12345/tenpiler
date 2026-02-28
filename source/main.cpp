@@ -9,6 +9,7 @@
 #include "graph/Graph.hpp"
 #include "graph/Dumber.hpp"
 #include "utils/concole.hpp"
+#include "command_line_args.hpp"
 
 #include <onnx/onnx-ml.pb.h>
 
@@ -18,12 +19,15 @@
 //TODO downlaoad tests and test
 //TODO update README
 
-int main() try {
+int main(const int argc, const char *argv[]) try {
+
+    AppSettings settings = {};
+    if (ParseCommandLineArgs(settings, argc, argv) == false)
+        return 0;
+
     onnx::ModelProto model;
-    // std::ifstream input("models/mnist-8.onnx", std::ios::binary);
-    std::ifstream input1("models/tensor_compiler_test.onnx", std::ios::binary);
-    
-    if (!model.ParseFromIstream(&input1)) {
+
+    if (!model.ParseFromIstream(settings.istream)) {
         std::cerr << "Failed to parse ONNX file" << std::endl;
         return EXIT_FAILURE;
     }
