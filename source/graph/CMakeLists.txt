@@ -32,6 +32,9 @@ target_link_libraries(graph
 PRIVATE
     RLogSU
     utils
+    onnx::onnx
+    onnx::onnx_proto
+    ${Protobuf_LIBRARIES}
 )
 
 set_target_properties(graph PROPERTIES

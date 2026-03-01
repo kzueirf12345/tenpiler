@@ -24,71 +24,22 @@ int main(const int argc, const char *argv[]) try {
     if (ParseCommandLineArgs(settings, argc, argv) == false)
         return 0;
 
-    onnx::ModelProto model;
-
-    if (!model.ParseFromIstream(settings.istream)) {
-        std::cerr << "Failed to parse ONNX file" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    const auto& onnx_graph = model.graph();
-    std::cout << "Graph name: " << onnx_graph.name() << std::endl;
-    std::cout << "Nodes count: " << onnx_graph.node_size() << std::endl;
-
-    for (int i = 0; i < std::min(10, onnx_graph.node_size()); ++i) {
-        const auto& node = onnx_graph.node(i);
-        std::cout << "Node " << i << ": " << node.op_type() 
-                  << " | Inputs: " << node.input_size()
-                  << " | Outputs: " << node.output_size() << std::endl;
-        std::cerr << "output: ";
-        for (const auto& elem : node.output()) {
-            std::cerr << elem << " ";
-        }
-        std::cerr << "\ninput: ";
-        for (const auto& elem : node.input()) {
-            std::cerr << elem << " ";
-        }
-        std::cerr << std::endl;
-    }
-
-    std::cout << std::endl << std::endl;
-
-    std::ifstream input2("models/tensor_compiler_test.onnx", std::ios::binary);
-    tenpiler::graph::Graph graph;
-    graph.LoadFromOnnx(input2);
-
-    for (size_t i = 0; i < std::min(10ul, graph.getNodes().size()); ++i) {
-        const auto& node = graph.getNodes()[i];
-        std::cout << "Node " << i << ": " << node.sayMyName() 
-                  << " | Inputs: " << node.getInputs().size()
-                  << " | Outputs: " << node.getOutputs().size() << std::endl;
-        std::cerr << "output: ";
-        for (const auto& elem : node.getOutputs()) {
-            std::cerr << elem << " ";
-        }
-        std::cerr << "\ninput: ";
-        for (const auto& elem : node.getInputs()) {
-            std::cerr << elem << " ";
-        }
-        std::cerr << std::endl;
-    }
+    std::vector<std::string> files;
     
-    std::cerr << "All tensors:\n";
-    for (const auto& [name, tensor] : graph.getTensors())
-    {
-        std::cerr << name << " ";
+    for (const auto& entry : std::filesystem::directory_iterator("./models/simple")) {
+        if (!entry.is_regular_file() && entry.path().extension() != ".onnx") {
+            continue;
+        }
+        const std::string filename = entry.path().string();
+
+        std::cerr << filename << std::endl;
+
+        std::ifstream input(filename, std::ios::binary);
+        tenpiler::graph::Graph graph;
+        graph.LoadFromOnnx(input);
+
+        RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
     }
-    std::cerr << std::endl;
-
-
-    std::cout << std::endl << std::endl << "Graph test" << std::endl;
-
-    for (size_t i = 0; i < std::min(10ul, graph.getNodes().size()); ++i) {
-        const auto& node = graph.getNodes()[i];
-        std::cout << node.getDot() << std::endl;
-    }
-
-    RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
 
     return EXIT_SUCCESS;
 }
