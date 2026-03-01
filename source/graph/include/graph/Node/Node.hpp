@@ -4,7 +4,11 @@
 #include <string>
 #include <vector>
 #include <concepts>
+#include <any>
+#include <optional>
+#include <iostream>
 
+#include "graph/Node/OpsAttr.hpp"
 #include "graph/Node/OpsDumb.hpp"
 #include "graph/Node/NodeMeta.hpp"
 
@@ -24,9 +28,10 @@ private:
     struct Concept {
         virtual ~Concept() = default;
 
-        virtual const std::string&              getName   () const noexcept = 0;
-        virtual const std::vector<std::string>& getInputs () const noexcept = 0;
-        virtual const std::vector<std::string>& getOutputs() const noexcept = 0;
+        virtual const std::string&              getName   ()                            const noexcept = 0;
+        virtual const std::vector<std::string>& getInputs ()                            const noexcept = 0;
+        virtual const std::vector<std::string>& getOutputs()                            const noexcept = 0;
+        virtual std::any                        getAttribute(const std::string& name)   const          = 0;
 
         virtual std::string getDot() const = 0;
 
@@ -48,6 +53,10 @@ private:
         [[nodiscard]] const std::string&              getName    () const noexcept override { return node_instance.meta().op_type; }
         [[nodiscard]] const std::vector<std::string>& getInputs  () const noexcept override { return node_instance.meta().inputs;  }
         [[nodiscard]] const std::vector<std::string>& getOutputs () const noexcept override { return node_instance.meta().outputs; }
+
+        [[nodiscard]] std::any getAttribute(const std::string& name) const override {
+            return GetAttribute(node_instance, name);
+        }
 
         std::string getDot() const override {
             return dump::GetDot(node_instance);
@@ -84,6 +93,27 @@ public:
     [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept { return pImpl->getOutputs(); }
     
     std::string getDot() const { return pImpl->getDot(); }
+
+    template <typename T>
+    [[nodiscard]] std::optional<T> getAttribute(const std::string& name) const {
+        std::any val = pImpl->getAttribute(name);
+
+        if (val.has_value()) {
+            return std::nullopt;
+        }
+
+        if (const T& casted_val = std::any_cast<const T&>(val)) try {
+            return casted_val;
+        }
+        catch (std::bad_any_cast e) {
+#ifndef NDEBUG
+            std::cerr << "Can't cast '" << name << "' to correct type\n";
+#endif // NDEBUG
+            return std::nullopt;
+        }
+
+        return std::nullopt;
+    }
 };
 
 }

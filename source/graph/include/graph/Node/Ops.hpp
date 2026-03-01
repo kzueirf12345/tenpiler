@@ -172,6 +172,15 @@ private:
 	uint64_t groups_;
 	PadType auto_pad_;
 
+public:
+
+	[[nodiscard]] const std::vector<uint64_t>& get_kernel_shape() const noexcept { return kernel_shape_; };
+	[[nodiscard]] const std::vector<uint64_t>& get_strides() const noexcept { return strides_; };
+	[[nodiscard]] const std::vector<uint64_t>& get_pads() const noexcept { return pads_; };
+	[[nodiscard]] const std::vector<uint64_t>& get_dilations() const noexcept { return dilations_; };
+	[[nodiscard]] const uint64_t& get_groups() const noexcept { return groups_; };
+	[[nodiscard]] const PadType& get_auto_pad() const noexcept { return auto_pad_; };
+
 };
 
 class MaxPool {
@@ -225,6 +234,15 @@ private:
 	PadType auto_pad_;
 	bool ceil_mode_;
 
+public:
+
+	[[nodiscard]] const std::vector<uint64_t>& get_kernel_shape() const noexcept { return kernel_shape_; };
+	[[nodiscard]] const std::vector<uint64_t>& get_strides() const noexcept { return strides_; };
+	[[nodiscard]] const std::vector<uint64_t>& get_pads() const noexcept { return pads_; };
+	[[nodiscard]] const std::vector<uint64_t>& get_dilations() const noexcept { return dilations_; };
+	[[nodiscard]] const PadType& get_auto_pad() const noexcept { return auto_pad_; };
+	[[nodiscard]] const bool& get_ceil_mode() const noexcept { return ceil_mode_; };
+
 };
 
 class Gemm {
@@ -262,6 +280,13 @@ private:
 	float betta_;
 	bool transA_;
 	bool transB_;
+
+public:
+
+	[[nodiscard]] const float& get_alpha() const noexcept { return alpha_; };
+	[[nodiscard]] const float& get_betta() const noexcept { return betta_; };
+	[[nodiscard]] const bool& get_transA() const noexcept { return transA_; };
+	[[nodiscard]] const bool& get_transB() const noexcept { return transB_; };
 
 };
 

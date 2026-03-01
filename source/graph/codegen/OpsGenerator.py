@@ -8,14 +8,17 @@ from generator import \
     generate_op_table_hpp, \
     generate_node_onnx_creator_cpp, \
     generate_node_dumb_hpp, \
-    generate_node_dumb_cpp
+    generate_node_dumb_cpp, \
+    generate_node_attr_hpp, \
+    generate_node_attr_cpp
     
         
 if __name__ == "__main__":
     args = parse_arguments()
 
     input_path, node_header_path, node_source_path, \
-        node_header_dumb_path, node_source_dumb_path, node_onnx_creator_dir_path \
+    node_header_dumb_path, node_source_dumb_path, node_onnx_creator_dir_path, \
+    node_header_attr_path, node_source_attr_path \
             = validate_paths(args)
 
     data = load_json(input_path, args.verbose)
@@ -54,6 +57,12 @@ if __name__ == "__main__":
             print("Генерация файлов дампа...")
         generate_node_dumb_hpp(data, node_header_dumb_path, args.verbose)
         generate_node_dumb_cpp(data, node_source_dumb_path, args.verbose)
+        
+    if args.mode in ["all", "node_attr"]:
+        if args.verbose:
+            print("Генерация файлов дампа...")
+        generate_node_attr_hpp(data, node_header_attr_path, args.verbose)
+        generate_node_attr_cpp(data, node_source_attr_path, args.verbose)
         
 
     if args.verbose:

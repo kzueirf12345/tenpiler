@@ -10,6 +10,7 @@ add_library(graph STATIC
     src/Node/Node.cpp
     src/Node/utils.cpp
     src/Node/OpsDumb.cpp
+    src/Node/OpsAttr.cpp
 )
 
 target_include_directories(graph

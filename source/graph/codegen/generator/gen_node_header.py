@@ -98,6 +98,18 @@ def generate_op_decl(op_desc, verbose=False):
             decl += f"\t{attr_type} {attr_name}_;\n"
         
         decl += "\n"
+        
+        decl += \
+            "public:\n" \
+            "\n"
+            
+        for attr in attributes:
+            attr_type = get_cpp_type(attr)
+            attr_name = attr["name"]
+            
+            decl += f"\t[[nodiscard]] const {attr_type}& get_{attr_name}() const noexcept {{ return {attr_name}_; }};\n"
+        
+        decl += "\n"
     
     decl += "};\n"
         

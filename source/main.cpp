@@ -13,11 +13,10 @@
 
 #include <onnx/onnx-ml.pb.h>
 
-//TODO graphiz
-//TODO соси хуйка (by твой сокомандник Арсений Шелонини Б01-411)
-//TODO switch uint to int
-//TODO downlaoad tests and test
+//TODO downlaoad tests and test (CI)
 //TODO update README
+//TODO codegen to cmake
+//TODO skibidi main
 
 int main(const int argc, const char *argv[]) try {
 
