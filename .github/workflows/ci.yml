@@ -18,15 +18,20 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake protobuf-compiler libprotobuf-dev libfmt-dev
-        git clone --depth 1 --branch v1.14.1 https://github.com/onnx/onnx.git
-        cd onnx
-        git submodule update --init --recursive
-        mkdir build && cd build
-        cmake -DONNX_USE_PROTOBUF_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release ..
+        sudo apt update
+        sudo apt install -y build-essential git wget libprotobuf-dev protobuf-compiler snap libfmt-dev
+        sudo snap install cmake --classic
+        git clone --recursive https://github.com/onnx/onnx.git ~/onnx
+        cd ~/onnx
+        # Собираем и устанавливаем
+        mkdir -p build && cd build
+        cmake .. \
+          -DONNX_BUILD_TESTS=OFF \
+          -DONNX_USE_PROTOBUF_SHARED_LIBS=ON \
+          -DCMAKE_BUILD_TYPE=Release
         make -j$(nproc)
         sudo make install
+        sudo ldconfig
 
     - name: Configure CMake
       run: cmake -DCMAKE_BUILD_TYPE=Release -B build
