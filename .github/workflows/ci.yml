@@ -1,21 +1,28 @@
-name: CI for project
+name: C++ CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
-  hello-world:
+  build-and-test:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
-    - name: Say Hello
-      run: echo "Hello, GitHub Actions! This is my first workflow!"
-      
-    - name: Show date
-      run: date
+      with:
+        submodules: recursive
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake protobuf-compiler libprotobuf-dev libfmt-dev
+
+    - name: Configure CMake
+      run: cmake -DCMAKE_BUILD_TYPE=Release -B build
+
+    - name: Build
+      run: cmake --build ./build
