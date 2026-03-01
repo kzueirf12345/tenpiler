@@ -17,13 +17,12 @@ jobs:
         submodules: recursive
 
     - name: Install Dependencies
-      run: |
+      run:
         sudo apt update
         sudo apt install -y build-essential git wget libprotobuf-dev protobuf-compiler snap libfmt-dev
         sudo snap install cmake --classic
         git clone --recursive https://github.com/onnx/onnx.git ~/onnx
         cd ~/onnx
-        # Собираем и устанавливаем
         mkdir -p build && cd build
         cmake .. \
           -DONNX_BUILD_TESTS=OFF \
