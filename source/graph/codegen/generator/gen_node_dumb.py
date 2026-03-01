@@ -25,7 +25,7 @@ def generate_node_dumb_hpp(data, output_path, verbose=False):
     
     for op_num in range(len(operations)):
         op = operations[op_num]
-        generated_code += f"std::string_view GetDot(const {op['name']}& n);\n"
+        generated_code += f"std::string GetDot(const {op['name']}& n);\n"
     
     generated_code += "\n"
     
@@ -45,8 +45,13 @@ def generate_node_dumb_impl(op_desc, verbose=False):
     name = op_desc["name"]
          
     impl = \
-        f"std::string_view GetDot(const {name}& n){{\n" \
-        "\treturn n.meta().op_type;\n" \
+        f"std::string GetDot(const {name}& n){{\n" \
+        f"\treturn std::to_string({name}::MIN_INPUTS_SIZE) + \"-\" + " \
+        f"std::to_string({name}::MAX_INPUTS_SIZE) + \" | \" + " \
+        "n.meta().op_type + " \
+        f"\" | \" + std::to_string({name}::MIN_OUTPUTS_SIZE) + \"-\" + " \
+        f"std::to_string({name}::MAX_OUTPUTS_SIZE)" \
+        ";\n" \
         "}\n" \
         "\n"
         

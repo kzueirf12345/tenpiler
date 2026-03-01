@@ -28,7 +28,7 @@ private:
         virtual const std::vector<std::string>& getInputs () const noexcept = 0;
         virtual const std::vector<std::string>& getOutputs() const noexcept = 0;
 
-        virtual std::string_view getDot() const = 0;
+        virtual std::string getDot() const = 0;
 
         virtual std::unique_ptr<Concept> clone() const = 0;
     };
@@ -49,7 +49,7 @@ private:
         [[nodiscard]] const std::vector<std::string>& getInputs  () const noexcept override { return node_instance.meta().inputs;  }
         [[nodiscard]] const std::vector<std::string>& getOutputs () const noexcept override { return node_instance.meta().outputs; }
 
-        std::string_view getDot() const override {
+        std::string getDot() const override {
             return dump::GetDot(node_instance);
         }
     };
@@ -83,7 +83,7 @@ public:
     [[nodiscard]] const std::vector<std::string>& getInputs () const noexcept { return pImpl->getInputs (); }
     [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept { return pImpl->getOutputs(); }
     
-    std::string_view getDot() const { return pImpl->getDot(); }
+    std::string getDot() const { return pImpl->getDot(); }
 };
 
 }

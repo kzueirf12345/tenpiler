@@ -9,15 +9,15 @@ namespace tenpiler {
 namespace graph {
 namespace dump {
 
-std::string_view GetDot(const Add& n);
-std::string_view GetDot(const Mul& n);
-std::string_view GetDot(const Sub& n);
-std::string_view GetDot(const Div& n);
-std::string_view GetDot(const Conv& n);
-std::string_view GetDot(const MaxPool& n);
-std::string_view GetDot(const Gemm& n);
-std::string_view GetDot(const Relu& n);
-std::string_view GetDot(const MatMul& n);
+std::string GetDot(const Add& n);
+std::string GetDot(const Mul& n);
+std::string GetDot(const Sub& n);
+std::string GetDot(const Div& n);
+std::string GetDot(const Conv& n);
+std::string GetDot(const MaxPool& n);
+std::string GetDot(const Gemm& n);
+std::string GetDot(const Relu& n);
+std::string GetDot(const MatMul& n);
 
 } // namespace dump
 } // namespace graph
