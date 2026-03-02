@@ -1,0 +1,256 @@
+{
+  "namespace": "tenpiler::graph",
+  "operations": [
+    {
+      "name": "Add",
+      "onnx_name": "Add",
+      "inputs": { "min": 2, "max": 2 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    },
+    {
+      "name": "Mul",
+      "onnx_name": "Mul",
+      "inputs": { "min": 2, "max": 2 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    },
+    {
+      "name": "Sub",
+      "onnx_name": "Sub",
+      "inputs": { "min": 2, "max": 2 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    },
+    {
+      "name": "Div",
+      "onnx_name": "Div",
+      "inputs": { "min": 2, "max": 2 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    },
+    {
+      "name": "Conv",
+      "onnx_name": "Conv",
+      "inputs": { "min": 2, "max": 3 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": [
+        {
+          "name": "kernel_shape",
+          "type": "vector<uint64_t>",
+          "default": null
+        },
+        {
+          "name": "strides",
+          "type": "vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "pads",
+          "type": "vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "dilations",
+          "type": "vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "groups",
+          "type": "uint64_t",
+          "default": "1"
+        },
+        {
+          "name": "auto_pad",
+          "type": "enum",
+          "enum_name": "PadType",
+          "enum_values": ["NOTSET", "SAME_UPPER", "SAME_LOWER", "VALID"],
+          "default": "NOTSET"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "check",
+          "condition": "kernel_shape.empty()",
+          "description": "kernel shape must not be empty"
+        },
+        {
+          "type": "set_default",
+          "condition": "strides.empty()",
+          "attr_name": "strides",
+          "value": "std::vector<uint64_t>(kernel_shape.size(), 1)"
+        },
+        {
+          "type": "check",
+          "condition": "strides.size() != kernel_shape.size()",
+          "description": "strides and kernel_shape size must be equal"
+        },
+        {
+          "type": "check",
+          "condition": "!(pads.empty() || (auto_pad == PadType::NOTSET))",
+          "description": "pads and auto_pad can't set at the same time"
+        },
+        {
+          "type": "set_default",
+          "condition": "pads.empty()",
+          "attr_name": "pads",
+          "value": "std::vector<uint64_t>(kernel_shape.size() * 2, 0)"
+        },
+        {
+          "type": "check",
+          "condition": "pads.size() != 2 * kernel_shape.size()",
+          "description": "pads size must be equal 2 * kernel_shape size"
+        },
+        {
+          "type": "set_default",
+          "condition": "dilations.empty()",
+          "attr_name": "dilations",
+          "value": "std::vector<uint64_t>(kernel_shape.size(), 1)"
+        },
+        {
+          "type": "check",
+          "condition": "dilations.size() != kernel_shape.size()",
+          "description": "dilations and kernel_shape size must be equal"
+        },
+        {
+          "type": "check",
+          "condition": "groups < 1",
+          "description": "groups must be >= 1"
+        }
+      ]
+    },
+    {
+      "name": "MaxPool",
+      "onnx_name": "MaxPool",
+      "inputs": { "min": 1, "max": 1 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": [
+        {
+          "name": "kernel_shape",
+          "type": "vector<uint64_t>",
+          "default": null
+        },
+        {
+          "name": "strides",
+          "type": "vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "pads",
+          "type": "vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "dilations",
+          "type": "vector<uint64_t>",
+          "default": "[]"
+        },
+        {
+          "name": "auto_pad",
+          "type": "enum",
+          "enum_name": "PadType",
+          "enum_values": ["NOTSET", "SAME_UPPER", "SAME_LOWER", "VALID"],
+          "default": "NOTSET"
+        },
+        {
+          "name": "ceil_mode",
+          "type": "bool",
+          "default": "false"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "check",
+          "condition": "kernel_shape.empty()",
+          "description": "kernel shape must not be empty"
+        },
+        {
+          "type": "set_default",
+          "condition": "strides.empty()",
+          "attr_name": "strides",
+          "value": "std::vector<uint64_t>(kernel_shape.size(), 1)"
+        },
+        {
+          "type": "check",
+          "condition": "strides.size() != kernel_shape.size()",
+          "description": "strides and kernel_shape size must be equal"
+        },
+        {
+          "type": "check",
+          "condition": "!(pads.empty() || (auto_pad == PadType::NOTSET))",
+          "description": "pads and auto_pad can't set at the same time"
+        },
+        {
+          "type": "set_default",
+          "condition": "pads.empty()",
+          "attr_name": "pads",
+          "value": "std::vector<uint64_t>(kernel_shape.size() * 2, 0)"
+        },
+        {
+          "type": "check",
+          "condition": "pads.size() != 2 * kernel_shape.size()",
+          "description": "pads size must be equal 2 * kernel_shape size"
+        },
+        {
+          "type": "set_default",
+          "condition": "dilations.empty()",
+          "attr_name": "dilations",
+          "value": "std::vector<uint64_t>(kernel_shape.size(), 1)"
+        },
+        {
+          "type": "check",
+          "condition": "dilations.size() != kernel_shape.size()",
+          "description": "dilations and kernel_shape size must be equal"
+        }
+      ]
+    },
+    {
+      "name": "Gemm",
+      "onnx_name": "Gemm",
+      "inputs": { "min": 2, "max": 3 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": [
+        { "name": "alpha", "type": "float", "default": "1.0f" },
+        { "name": "betta", "type": "float", "default": "1.0f" },
+        { "name": "transA", "type": "bool", "default": "false" },
+        { "name": "transB", "type": "bool", "default": "false" }
+      ],
+      "constraints": [
+        {
+          "type": "check",
+          "condition": "std::isnan(alpha)",
+          "description": "Gemm alpha is NaN"
+        },
+        {
+          "type": "check",
+          "condition": "std::isnan(betta)",
+          "description": "Gemm betta is NaN"
+        },
+        {
+          "type": "check",
+          "condition": "std::isinf(alpha)",
+          "description": "Gemm alpha is Inf"
+        },
+        {
+          "type": "check",
+          "condition": "std::isinf(betta)",
+          "description": "Gemm betta is Inf"
+        }
+      ]
+    },
+    {
+      "name": "Relu",
+      "onnx_name": "Relu",
+      "inputs": { "min": 1, "max": 1 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    },
+    {
+      "name": "MatMul",
+      "onnx_name": "MatMul",
+      "inputs": { "min": 2, "max": 2 },
+      "outputs": { "min": 1, "max": 1 },
+      "attributes": []
+    }
+  ]
+}

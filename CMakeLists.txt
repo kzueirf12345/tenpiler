@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 ###===========================================FLAGS=================================================
 
-option(SANITIZE "Enable AddressSanitizer + UndefinedBehaviorSanitizer" OFF)
+option(SANITIZE "Enable Sanitizers" OFF)
 
 if(MSVC)
     add_compile_options(/W4 /WX)
@@ -37,13 +37,13 @@ endif()
 
 ###===========================================ONNX==================================================
 
-# 1. Ищем Protobuf (обязательная зависимость ONNX)
+# Find Protobuf 
 find_package(Protobuf REQUIRED)
 if(NOT Protobuf_FOUND)
-    message(FATAL_ERROR "Protobuf not found. Install libprotobuf-dev and protobuf-compiler")
+    message(FATAL_ERROR "Protobuf not found")
 endif()
 
-# 2. Ручной поиск ONNX (т.к. официальный пакет не всегда предоставляет config-файл)
+# Find ONNX
 find_path(ONNX_INCLUDE_DIR
     NAMES onnx/onnx-ml.pb.h
     PATHS /usr/local/include /usr/include
@@ -62,7 +62,7 @@ find_library(ONNX_PROTO_LIBRARY
     REQUIRED
 )
 
-# 3. Создаём импортированные цели (как если бы был найден через find_package)
+#Create targets
 add_library(onnx::onnx SHARED IMPORTED)
 set_target_properties(onnx::onnx PROPERTIES
     IMPORTED_LOCATION "${ONNX_LIBRARY}"
@@ -75,12 +75,13 @@ set_target_properties(onnx::onnx_proto PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${ONNX_INCLUDE_DIR}"
 )
 
-
 ###===========================================SUBDIRECTORY==========================================
+
 add_subdirectory(source/graph)
+add_subdirectory(source/utils)
+add_subdirectory(lib/RLogSU)
 
 add_executable(tenpiler source/main.cpp)
-
 
 ###===========================================LIB_LINK==============================================
 
@@ -96,4 +97,11 @@ target_link_libraries(tenpiler PRIVATE
     ${Protobuf_LIBRARIES}
 
     graph
+    utils
+    RLogSU
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )

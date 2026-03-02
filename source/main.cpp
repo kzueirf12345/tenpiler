@@ -1,25 +1,61 @@
-#include <onnx/onnx-ml.pb.h>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 
-int main() {
-    onnx::ModelProto model;
-    std::ifstream input("models/mnist-8.onnx", std::ios::binary);
+#include <stdexcept>
+
+#include "RLogSU/logger.hpp"
+
+#include "graph/Graph.hpp"
+#include "graph/Dumber.hpp"
+#include "utils/concole.hpp"
+#include "command_line_args.hpp"
+
+#include <onnx/onnx-ml.pb.h>
+
+//TODO CI
+//TODO update README
+
+int main(const int argc, const char *argv[]) try {
+
+    AppSettings settings = {};
+    if (ParseCommandLineArgs(settings, argc, argv) == false)
+        return 0;
+
+    std::vector<std::string> files;
     
-    if (!model.ParseFromIstream(&input)) {
-        std::cerr << "Failed to parse ONNX file" << std::endl;
-        return 1;
+    for (const auto& entry : std::filesystem::directory_iterator("./models/simple")) {
+        if (!entry.is_regular_file() && entry.path().extension() != ".onnx") {
+            continue;
+        }
+        const std::string filename = entry.path().string();
+
+        std::cerr << filename << std::endl;
+
+        std::ifstream input(filename, std::ios::binary);
+        tenpiler::graph::Graph graph;
+        graph.LoadFromOnnx(input);
+
+        RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
     }
 
-    const auto& graph = model.graph();
-    std::cout << "Graph name: " << graph.name() << std::endl;
-    std::cout << "Nodes count: " << graph.node_size() << std::endl;
+    std::ifstream input("models/tensor_compiler_test.onnx", std::ios::binary);
+    tenpiler::graph::Graph graph;
+    graph.LoadFromOnnx(input);
 
-    // Выводим типы первых 3 узлов
-    for (int i = 0; i < std::min(3, graph.node_size()); ++i) {
-        const auto& node = graph.node(i);
-        std::cout << "Node " << i << ": " << node.op_type() 
-                  << " | Inputs: " << node.input_size()
-                  << " | Outputs: " << node.output_size() << std::endl;
-    }
+    RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
+
+    return EXIT_SUCCESS;
+}
+catch(const std::logic_error& e) {
+    std::cerr <<  RED_TEXT("!!!LOGIC_EXCEPTION!!\n") << e.what() << std::endl;
+}
+catch(const std::runtime_error& e) {
+    std::cerr <<  RED_TEXT("!!!RUNTIME_EXCEPTION!!\n") << e.what() << std::endl;
+}
+catch(const std::exception& e) {
+    std::cerr <<  RED_TEXT("!!!EXCEPTION!!\n") << e.what() << std::endl;
+}
+catch(...) {
+    std::cerr << RED_TEXT("Something went wrong!!!") << std::endl;
 }
