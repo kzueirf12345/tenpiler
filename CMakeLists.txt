@@ -79,6 +79,7 @@ set_target_properties(onnx::onnx_proto PROPERTIES
 
 add_subdirectory(source/graph)
 add_subdirectory(source/utils)
+add_subdirectory(lib/RLogSU)
 
 add_executable(tenpiler source/main.cpp)
 
@@ -97,4 +98,10 @@ target_link_libraries(tenpiler PRIVATE
 
     graph
     utils
+    RLogSU
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )

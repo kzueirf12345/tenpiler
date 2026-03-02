@@ -1,64 +1,62 @@
 #include "graph/Graph.hpp"
-#include "graph/NodeFactory.hpp"
+
+#include <onnx/onnx-ml.pb.h>
+
+#include "graph/Tensor.hpp"
+#include "GraphOnnxCreator/GraphOnnxCreator.hpp"
+#include "utils/common.hpp"
 
 namespace tenpiler {
 namespace graph {
 
-Graph::Graph(const onnx::GraphProto& onnx_graph)
+Graph::Graph() = default;
+
+Graph::Graph(
+    std::unordered_map<std::string, Tensor> tensors,
+    std::vector<Node> nodes,
+    std::vector<std::string> input,
+    std::vector<std::string> output
+)   :   tensors_ (std::move(tensors)) 
+    ,   nodes_   (std::move(nodes))
+    ,   input_   (std::move(input))
+    ,   output_  (std::move(output))
+{}
+
+
+void Graph::LoadFromOnnx(std::istream& input_onnx)
 {
-    const auto& onnx_input    = onnx_graph.input();
-    const auto& onnx_output   = onnx_graph.output();
-    const auto& onnx_internal = onnx_graph.initializer();
-
-    input_  .reserve(onnx_input.size());
-    output_ .reserve(onnx_output.size());
-    tensors_.reserve(onnx_input.size() + onnx_output.size() + onnx_internal.size());
-
-    for (const auto& onnx_input_tensor: onnx_input)
-    {
-        const Tensor input_tensor(onnx_input_tensor);
-        const std::string input_tensor_name(input_tensor.name);
-        input_.push_back(input_tensor_name);
-        tensors_.emplace(std::move(input_tensor_name), std::move(input_tensor));
+    if (!input_onnx.good()) {
+        utils::THROW("Input stream is in a bad state before parsing");
     }
 
-    for (const auto& onnx_output_tensor: onnx_output)
-    {
-        const Tensor output_tensor(onnx_output_tensor);
-        const std::string output_tensor_name(output_tensor.name);
-        output_.push_back(output_tensor_name);
-        tensors_.emplace(std::move(output_tensor_name), std::move(output_tensor));
+    onnx::ModelProto model;
+
+    if (!model.ParseFromIstream(&input_onnx)) {
+        utils::THROW("Failed to parse ONNX file");
     }
 
-    for (const auto& onnx_internal_tensor: onnx_internal)
-    {
-        const Tensor internal_tensor(onnx_internal_tensor);
-        const std::string internal_tensor_name(internal_tensor.name);
-        tensors_.emplace(std::move(internal_tensor_name), std::move(internal_tensor));
-    }
+    const auto& onnx_graph = model.graph();
 
-    const auto& onnx_nodes = onnx_graph.node();
-
-    nodes_.reserve(onnx_nodes.size());
-
-    for (const auto& onnx_node: onnx_nodes) {
-        nodes_.push_back(NodeFactory::Create(onnx_node));
-    }
+    *this = onnx_parse::CreateGraph(onnx_graph);
 }
 
-const std::vector<std::unique_ptr<Node>>& Graph::getNodes() const noexcept {
+const std::vector<Node>& Graph::getNodes()                          const noexcept {
     return nodes_;
 }
-const std::unordered_map<std::string, Tensor>& Graph::getTensors() const noexcept {
+
+const std::unordered_map<std::string, Tensor>& Graph::getTensors()  const noexcept {
     return tensors_;
 }
-const std::vector<std::string>& Graph::getInputs() const noexcept {
+
+const std::vector<std::string>& Graph::getInputs()                  const noexcept {
     return input_;
 }
-const std::vector<std::string>& Graph::getOutputs() const noexcept {
+
+const std::vector<std::string>& Graph::getOutputs()                 const noexcept {
     return output_;
 }
-const Tensor& Graph::getTensor(const std::string& name) const noexcept {
+
+const Tensor& Graph::getTensor(const std::string& name) const {
     return tensors_.at(name);
 }
 

@@ -1,227 +1,121 @@
 #pragma once
 
 #include <memory>
-#include <string_view>
 #include <string>
 #include <vector>
+#include <concepts>
+#include <any>
+#include <optional>
+#include <iostream>
 
-#include "graph/NodeFactory.hpp"
+#include "graph/Node/OpsAttr.hpp"
+#include "graph/Node/OpsDumb.hpp"
+#include "graph/Node/NodeMeta.hpp"
 
 namespace tenpiler {
 namespace graph {
 
+template <typename T>
+concept IsTenpilerNode = requires(T node) {
+    { node.meta() } noexcept -> std::convertible_to<const NodeMeta&>;
+};
+
 
 class Node {
-
-public:
-
-    [[nodiscard]] const std::string& sayMyName() const noexcept;
-
-    [[nodiscard]] const std::vector<std::string>& getInputs () const noexcept;
-    [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept;
-
-    virtual ~Node() = default;
-
-protected:
-
-    Node(std::string op_type, std::vector<std::string> inputs, std::vector<std::string> outputs);
-
-private:
-
-    std::string op_type_;
-
-    std::vector<std::string> inputs_;
-    std::vector<std::string> outputs_;
     
-};
-
-class Add final: public Node {
-
-public:
-
-    static constexpr std::string_view OnnxName = "Add";
-
-    static constexpr size_t INPUTS_SIZE = 2;
-    static constexpr size_t OUTPUTS_SIZE = 1;
-
-    static std::unique_ptr<Node> create(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs
-    );
-
-    static void REGISTER_METHOD_NAME();
-
 private:
 
-    Add(std::vector<std::string> inputs, std::vector<std::string> outputs);
+    struct Concept {
+        virtual ~Concept() = default;
 
-};
+        virtual const std::string&              getName   ()                            const noexcept = 0;
+        virtual const std::vector<std::string>& getInputs ()                            const noexcept = 0;
+        virtual const std::vector<std::string>& getOutputs()                            const noexcept = 0;
+        virtual std::any                        getAttribute(const std::string& name)   const          = 0;
 
-class Mul final: public Node {
+        virtual std::string getDot() const = 0;
 
-public:
-
-    static constexpr std::string_view OnnxName = "Mul";
-
-    static constexpr size_t INPUTS_SIZE  = 2;
-    static constexpr size_t OUTPUTS_SIZE = 1;
-
-    static std::unique_ptr<Node> create(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs
-    );
-
-    static void REGISTER_METHOD_NAME();
-
-private:
-
-    Mul(std::vector<std::string> inputs, std::vector<std::string> outputs);
-
-};
-
-class Conv final: public Node {
-
-public:
-
-    static constexpr std::string_view OnnxName = "Conv";
-
-    static constexpr size_t MIN_INPUTS_SIZE = 2;
-    static constexpr size_t MAX_INPUTS_SIZE = 3;
-    static constexpr size_t OUTPUTS_SIZE    = 1;
-
-public:
-
-    enum class PadType {
-        NotSet,
-        SameUpper,
-        SameLower,
-        Valid
+        virtual std::unique_ptr<Concept> clone() const = 0;
     };
 
-    static Conv::PadType ParseAutoPad(std::string_view str_auto_pad);
+    template <typename T>
+    struct Model : Concept {
+
+        T node_instance;
+
+        explicit Model(const T  &node) : node_instance(node)            {}
+        explicit Model(      T &&node) : node_instance(std::move(node)) {}
+
+        [[nodiscard]] std::unique_ptr<Concept> clone() const override {
+            return std::make_unique<Model<T>>(*this);
+        }
+
+        [[nodiscard]] const std::string&              getName    () const noexcept override { return node_instance.meta().op_type; }
+        [[nodiscard]] const std::vector<std::string>& getInputs  () const noexcept override { return node_instance.meta().inputs;  }
+        [[nodiscard]] const std::vector<std::string>& getOutputs () const noexcept override { return node_instance.meta().outputs; }
+
+        [[nodiscard]] std::any getAttribute(const std::string& name) const override {
+            return GetAttribute(node_instance, name);
+        }
+
+        std::string getDot() const override {
+            return dump::GetDot(node_instance);
+        }
+    };
+
+private:
+
+    std::unique_ptr<Concept> pImpl;
 
 public:
 
-    static std::unique_ptr<Node> create(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs,
-        std::vector<uint64_t> kernel_shape,
-        std::vector<uint64_t> strides,
-        std::vector<uint64_t> pads,
-        std::vector<uint64_t> dilations,
-        uint64_t groups = 1,
-        PadType auto_pad = PadType::NotSet
-    );
+    template <IsTenpilerNode T> 
+    Node(T node)            : pImpl(std::make_unique<Model<T>>(std::move(node))) {}
 
-    static void REGISTER_METHOD_NAME();
-
-private:
-
-    Conv(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs,
-        std::vector<uint64_t> kernel_shape,
-        std::vector<uint64_t> strides,
-        std::vector<uint64_t> pads,
-        std::vector<uint64_t> dilations,
-        uint64_t groups = 1,
-        PadType auto_pad = PadType::NotSet
-    );
-
-private:
+    Node(const Node& other) : pImpl(other.pImpl->clone()) {}
     
-    std::vector<uint64_t> kernel_shape_;
-    std::vector<uint64_t> strides_;
-    std::vector<uint64_t> pads_;
-    std::vector<uint64_t> dilations_;
-    uint64_t groups_;
-    PadType auto_pad_;
+    Node(Node&&)            noexcept = default;
+    Node& operator=(Node&&) noexcept = default;
 
-};
+    Node& operator=(const Node& other) {
+        if (this != &other) {
+            pImpl = other.pImpl->clone();
+        }
+        return *this;
+    }
 
-class Relu final: public Node {
-
-public:
-
-    static constexpr std::string_view OnnxName = "Relu";
-
-    static constexpr size_t INPUTS_SIZE = 1;
-    static constexpr size_t OUTPUTS_SIZE = 1;
-
-    static std::unique_ptr<Node> create(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs
-    );
-
-    static void REGISTER_METHOD_NAME();
-
-private:
-
-    Relu(std::vector<std::string> inputs, std::vector<std::string> outputs);
-
-};
-
-class MatMul final: public Node {
+    ~Node() = default;
 
 public:
 
-    static constexpr std::string_view OnnxName = "MatMul";
+    [[nodiscard]] const std::string&              sayMyName () const noexcept { return pImpl->getName   (); }
+    [[nodiscard]] const std::vector<std::string>& getInputs () const noexcept { return pImpl->getInputs (); }
+    [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept { return pImpl->getOutputs(); }
+    
+    std::string getDot() const { return pImpl->getDot(); }
 
-    static constexpr size_t INPUTS_SIZE = 2;
-    static constexpr size_t OUTPUTS_SIZE = 1;
+    template <typename T>
+    [[nodiscard]] std::optional<T> getAttribute(const std::string& name) const {
+        std::any val = pImpl->getAttribute(name);
 
-    static std::unique_ptr<Node> create(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs
-    );
+        if (val.has_value()) {
+            return std::nullopt;
+        }
 
-    static void REGISTER_METHOD_NAME();
+        if (const T& casted_val = std::any_cast<const T&>(val)) try {
+            return casted_val;
+        }
+        catch (std::bad_any_cast e) {
+#ifndef NDEBUG
+            std::cerr << "Can't cast '" << name << "' to correct type\n";
+#endif // NDEBUG
+            return std::nullopt;
+        }
 
-private:
-
-    MatMul(std::vector<std::string> inputs, std::vector<std::string> outputs);
-
-};
-
-class Gemm final: public Node {
-
-public:
-
-    static constexpr std::string_view OnnxName = "Gemm";
-
-    static constexpr size_t MIN_INPUTS_SIZE = 2;
-    static constexpr size_t MAX_INPUTS_SIZE = 3;
-    static constexpr size_t OUTPUTS_SIZE = 1;
-
-    static std::unique_ptr<Node> create(
-        std::vector<std::string> inputs, 
-        std::vector<std::string> outputs,
-        float alpha = 1,
-        float betta = 1,
-        bool transA = false,
-        bool transB = false
-    );
-
-    static void REGISTER_METHOD_NAME();
-
-private:
-
-    Gemm(std::vector<std::string> inputs, 
-         std::vector<std::string> outputs,
-         float alpha = 1,
-         float betta = 1,
-         bool transA = false,
-         bool transB = false
-    );
-
-private:
-
-    float alpha_;
-    float betta_;
-    bool transA_;
-    bool transB_;
-
+        return std::nullopt;
+    }
 };
 
 }
+
 }
