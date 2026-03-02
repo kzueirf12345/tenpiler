@@ -68,10 +68,20 @@ cd tenpiler
 
 cmake -B build -DCMAKE_BUILD_TYPE=Release # -DSANITIZE=ON включение санитайзеров
 cmake --build build -j$(nproc)
+```
 
-# Запуск
+## Запуск
+```bash
 ./build/tenpiler
 ```
+
+|       OPTIONS                    |                                   |
+|----------------------------------|-----------------------------------|
+| `-h`, `--help`                   |   Вывести помощь                  |
+| `-f`, `--input_onnx` `<FILE>`    | Задать имя входного onnx файла    |
+| `-l`, `--logspace`   `<FOLDER>`  | Задать пространство для логов |
+
+
 
 ## Frontend
 
