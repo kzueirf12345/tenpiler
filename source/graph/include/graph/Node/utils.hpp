@@ -6,7 +6,7 @@
 #include <optional>
 #include <string>
 
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 
 namespace tenpiler {
 namespace graph {

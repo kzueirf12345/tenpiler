@@ -11,7 +11,7 @@ def generate_node_onnx_creator_hpp(data, output_path, verbose=False):
         "\n" \
         "#pragma once\n" \
         "\n" \
-        "#include <onnx/onnx-ml.pb.h>\n" \
+        "#include <onnx/onnx_pb.h>\n" \
         "\n" \
         "#include \"graph/Node/Node.hpp\"\n" \
         "\n"
@@ -144,7 +144,7 @@ def generate_node_onnx_creator_cpp(data, output_path, verbose=False):
         "\n" \
         "#include <string>\n" \
         "\n" \
-        "#include <onnx/onnx-ml.pb.h>\n" \
+        "#include <onnx/onnx_pb.h>\n" \
         "\n" \
         "#include \"graph/Node/utils.hpp\"\n" \
         "#include \"utils/common.hpp\"\n" \

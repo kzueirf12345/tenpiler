@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 
 #include "graph/Node/utils.hpp"
 #include "utils/common.hpp"

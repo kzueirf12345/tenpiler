@@ -82,3 +82,5 @@ set_target_properties(graph PROPERTIES
 )
 
 add_dependencies(graph generate_ops)
+
+target_compile_definitions(graph PUBLIC ONNX_ML=1)

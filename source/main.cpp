@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 
 #include "RLogSU/logger.hpp"
 
