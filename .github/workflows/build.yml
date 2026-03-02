@@ -8,6 +8,11 @@ jobs:
   build:
     runs-on: ubuntu-22.04
 
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -47,8 +52,8 @@ jobs:
     - name: Configure CMake
       run: >
         cmake -B build 
-        -DCMAKE_BUILD_TYPE=Release 
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} 
         -DONNX_ROOT=${{ github.workspace }}/onnx-install
 
     - name: Build project
-      run: cmake --build build --config Release -j $(nproc)
+      run: cmake --build build --config ${{ matrix.build_type }} -j $(nproc)
