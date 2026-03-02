@@ -39,6 +39,12 @@ int main(const int argc, const char *argv[]) try {
         RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
     }
 
+    std::ifstream input("models/tensor_compiler_test.onnx", std::ios::binary);
+    tenpiler::graph::Graph graph;
+    graph.LoadFromOnnx(input);
+
+    RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
+
     return EXIT_SUCCESS;
 }
 catch(const std::logic_error& e) {
