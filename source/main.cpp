@@ -15,7 +15,6 @@
 
 //TODO downlaoad tests and test (CI)
 //TODO update README
-//TODO codegen to cmake
 //TODO skibidi main
 
 int main(const int argc, const char *argv[]) try {
