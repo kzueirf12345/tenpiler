@@ -62,7 +62,8 @@ Tensor CreateTensor(const onnx::ValueInfoProto& onnx_tensor) {
             
             if (dim.has_dim_value()) {
                 result.shape.push_back(dim.dim_value());
-            } else {
+            } 
+            else {
                 utils::THROW("Dimension " + std::to_string(dim_ind) + " has no value");
             }
         }
