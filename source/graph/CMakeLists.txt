@@ -31,7 +31,9 @@ add_custom_target(generate_ops DEPENDS ${CODEGEN_STAMP})
 set_source_files_properties(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Node/OpsDumb.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Node/OpsAttr.cpp
-    PROPERTIES GENERATED TRUE
+
+    PROPERTIES 
+        GENERATED TRUE
 )
 
 

@@ -1,17 +1,17 @@
 #include <cstdlib>
 #include <fstream>
+#include <filesystem>
 #include <iostream>
-
 #include <stdexcept>
+
+#include <onnx/onnx-ml.pb.h>
 
 #include "RLogSU/logger.hpp"
 
-#include "graph/Graph.hpp"
 #include "graph/Dumber.hpp"
 #include "utils/concole.hpp"
-#include "command_line_args.hpp"
+#include "cmd_options/cmd_options.hpp"
 
-#include <onnx/onnx-ml.pb.h>
 
 //TODO CI
 //TODO update README
@@ -19,7 +19,7 @@
 int main(const int argc, const char *argv[]) try {
 
     AppSettings settings = {};
-    if (ParseCommandLineArgs(settings, argc, argv) == false)
+    if (settings.parce(argc, argv) == false)
         return 0;
 
     std::vector<std::string> files;

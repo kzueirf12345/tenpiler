@@ -1,25 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <string_view>
-#include "RLogSU/logger.hpp"
+#include "cmd_options/cmd_options.hpp"
 #include "cxxopts.hpp"
+#include "RLogSU/logger.hpp"
 
-struct AppSettings
-{
-public:
-    friend bool ParseCommandLineArgs(AppSettings& settings, const int argc, const char *argv[]);
-
-    std::istream* istream = nullptr;
-
-private:
-    std::unique_ptr<std::ifstream> file_input_storage_;
-
-    static constexpr std::string_view DEFAULT_IFILE_NAME_ = "models/tensor_compiler_test.onnx";
-    static constexpr std::string_view DEFAULT_LOGSPACE_   = "logs";
-};
-
-inline bool ParseCommandLineArgs(AppSettings& settings, const int argc, const char *argv[])
+bool AppSettings::parce(const int argc, const char *argv[])
 {
     cxxopts::Options options("tenpiler");
 
@@ -46,17 +29,17 @@ inline bool ParseCommandLineArgs(AppSettings& settings, const int argc, const ch
 
     else
     {
-        input_filename = settings.DEFAULT_IFILE_NAME_;
+        input_filename = DEFAULT_IFILE_NAME_;
     }
 
-    settings.file_input_storage_ = std::make_unique<std::ifstream>(input_filename, std::ios::binary);
+    file_input_storage_ = std::make_unique<std::ifstream>(input_filename, std::ios::binary);
 
-    if (!settings.file_input_storage_->is_open())
+    if (!file_input_storage_->is_open())
     {
         throw std::runtime_error("Could not open file: " + input_filename);
     }
     
-    settings.istream = settings.file_input_storage_.get();
+    istream = file_input_storage_.get();
 
 
     //-------------------------logspace-------------------------------------------------------------
@@ -67,7 +50,7 @@ inline bool ParseCommandLineArgs(AppSettings& settings, const int argc, const ch
 
     else
     {
-        RLSU_SET_LOGSPACE(std::string(settings.DEFAULT_LOGSPACE_));
+        RLSU_SET_LOGSPACE(std::string(DEFAULT_LOGSPACE_));
     }
 
     return true;
