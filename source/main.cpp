@@ -13,9 +13,6 @@
 #include "cmd_options/cmd_options.hpp"
 
 
-//TODO CI
-//TODO update README
-
 int main(const int argc, const char *argv[]) try {
 
     AppSettings settings = {};
