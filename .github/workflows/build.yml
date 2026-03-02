@@ -1,0 +1,59 @@
+name: CI Build
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libprotobuf-dev protobuf-compiler libfmt-dev graphviz cmake
+
+    - name: Cache ONNX
+      id: cache-onnx
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/onnx-install
+        key:  ${{ runner.os }}-onnx-1.14
+
+    - name: Build ONNX
+      if: steps.cache-onnx.outputs.cache-hit != 'true'
+      run: |
+        git clone -b v1.14.0 --recursive https://github.com/onnx/onnx.git ${{ github.workspace }}/onnx-source
+        cd ${{ github.workspace }}/onnx-source
+        cmake -B build \
+          -DONNX_BUILD_TESTS=OFF \
+          -DONNX_USE_PROTOBUF_SHARED_LIBS=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/onnx-install
+        cmake --build build -j $(nproc)
+        cmake --install build
+
+    - name: Configure CMake
+      run: >
+        cmake -B build 
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} 
+        -DONNX_ROOT=${{ github.workspace }}/onnx-install
+
+    - name: Build project
+      run: cmake --build build --config ${{ matrix.build_type }} -j $(nproc)

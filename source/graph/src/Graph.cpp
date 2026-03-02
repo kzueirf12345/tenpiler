@@ -1,6 +1,6 @@
 #include "graph/Graph.hpp"
 
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 
 #include "graph/Tensor.hpp"
 #include "GraphOnnxCreator/GraphOnnxCreator.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 #include "frozen/unordered_map.h"
 #include "frozen/string.h"
 

@@ -46,19 +46,25 @@ endif()
 # Find ONNX
 find_path(ONNX_INCLUDE_DIR
     NAMES onnx/onnx-ml.pb.h
-    PATHS /usr/local/include /usr/include
+    HINTS 
+        ${ONNX_ROOT}/include        # переданное аргументом -DONNX_ROOT
+        $ENV{ONNX_ROOT}/include     # поиск переменной окружения с именем ONNX_ROOT
     REQUIRED
 )
 
 find_library(ONNX_LIBRARY
     NAMES onnx
-    PATHS /usr/local/lib /usr/lib
+    HINTS 
+        ${ONNX_ROOT}/lib
+        $ENV{ONNX_ROOT}/lib
     REQUIRED
 )
 
 find_library(ONNX_PROTO_LIBRARY
     NAMES onnx_proto
-    PATHS /usr/local/lib /usr/lib
+    HINTS 
+        ${ONNX_ROOT}/lib
+        $ENV{ONNX_ROOT}/lib
     REQUIRED
 )
 
@@ -80,6 +86,7 @@ set_target_properties(onnx::onnx_proto PROPERTIES
 add_subdirectory(source/graph)
 add_subdirectory(source/utils)
 add_subdirectory(lib/RLogSU)
+add_subdirectory(source/cmd_options)
 
 add_executable(tenpiler source/main.cpp)
 
@@ -99,6 +106,7 @@ target_link_libraries(tenpiler PRIVATE
     graph
     utils
     RLogSU
+    cmd_options
 )
 
 target_include_directories(${PROJECT_NAME}

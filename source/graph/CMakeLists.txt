@@ -31,7 +31,9 @@ add_custom_target(generate_ops DEPENDS ${CODEGEN_STAMP})
 set_source_files_properties(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Node/OpsDumb.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Node/OpsAttr.cpp
-    PROPERTIES GENERATED TRUE
+
+    PROPERTIES 
+        GENERATED TRUE
 )
 
 
@@ -80,3 +82,5 @@ set_target_properties(graph PROPERTIES
 )
 
 add_dependencies(graph generate_ops)
+
+target_compile_definitions(graph PUBLIC ONNX_ML=1)

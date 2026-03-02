@@ -1,6 +1,6 @@
 #include "GraphOnnxCreator.hpp"
 
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 
 #include "TensorOnnxCreator/TensorOnnxCreator.hpp"
 #include "NodeOnnxCreator/NodeFactory.hpp"

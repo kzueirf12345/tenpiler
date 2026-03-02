@@ -1,4 +1,4 @@
-#include <onnx/onnx-ml.pb.h>
+#include <onnx/onnx_pb.h>
 
 #include "TensorOnnxCreator.hpp"
 #include "graph/Tensor.hpp"
