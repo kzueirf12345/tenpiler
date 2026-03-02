@@ -13,9 +13,8 @@
 
 #include <onnx/onnx-ml.pb.h>
 
-//TODO downlaoad tests and test (CI)
+//TODO CI
 //TODO update README
-//TODO skibidi main
 
 int main(const int argc, const char *argv[]) try {
 
