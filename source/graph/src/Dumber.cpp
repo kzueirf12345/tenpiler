@@ -16,24 +16,11 @@
 
 namespace tenpiler {
 namespace graph    {
-namespace dump   {
+namespace dump     {
 
-static void InitDumbNodes(RLSU::Graphics::Graph& dumb_graph, 
-                          const std::vector<Node>& nodes)
+std::string GetTensorLabel(const Tensor& tensor)
 {
-    for (const Node& node : nodes)
-    {
-        RLSU::Graphics::Graph::Node node_dumb(&node);
-        node_dumb.SetShape(RLSU::Graphics::Shapes::NODE_RECORD);
-        node_dumb.SetLabel(std::string(node.getDot()));
-
-        dumb_graph.AddNode(node_dumb);
-    }
-}
-
-static std::string GetTensorShapeStr(const Tensor& tensor, const std::string& name)
-{
-    std::string shape_str = (name + "\n");
+    std::string shape_str = (tensor.name + "\n");
 
     #define TYPE_TO_STR_SWITCH_(type) case Tensor::Type::type: shape_str += #type; break
     switch (tensor.type) {
@@ -85,28 +72,46 @@ static std::string GetTensorShapeStr(const Tensor& tensor, const std::string& na
     return shape_str;
 }
 
-static void InitDumbTensors(RLSU::Graphics::Graph& dumb_graph, 
-                            const std::unordered_map<std::string, Tensor>& tensors)
+static void InitTensor(RLSU::Graphics::Graph& dumb_graph, 
+                       const Tensor& tensor)
 {
-    for (const auto& [name, tensor] : tensors)
-    {
-        RLSU::Graphics::Graph::Node tensor_dumb(&tensor);
+    RLSU::Graphics::Graph::Node tensor_dumb(&tensor);
         
-        tensor_dumb.SetShape(RLSU::Graphics::Shapes::NODE_DIAMOND);
-        tensor_dumb.SetColor(RLSU::Graphics::Colors::GREY);
+    tensor_dumb.SetShape(RLSU::Graphics::Shapes::NODE_DIAMOND);
+    tensor_dumb.SetColor(RLSU::Graphics::Colors::GREY);
 
-        tensor_dumb.SetLabel(GetTensorShapeStr(tensor, name));
+    tensor_dumb.SetLabel(GetTensorLabel(tensor));
 
-        dumb_graph.AddNode(tensor_dumb);
-    }
+    dumb_graph.AddNode(tensor_dumb);
 }
+
+static void InitNode(RLSU::Graphics::Graph& dumb_graph, 
+                       const Node& node)
+{
+    RLSU::Graphics::Graph::Node node_dumb(&node);
+    node_dumb.SetShape(RLSU::Graphics::Shapes::NODE_RECORD);
+    node_dumb.SetLabel(std::string(node.getDot()));
+
+    dumb_graph.AddNode(node_dumb);
+}
+
+
 
 void GraphDumb(const Graph& graph)
 {
     RLSU::Graphics::Graph dumb_graph;
 
-    InitDumbNodes  (dumb_graph,   graph.getNodes());
-    InitDumbTensors(dumb_graph, graph.getTensors());
+    for (const Node& node : graph.getNodes())
+    {
+        InitNode(dumb_graph, node);
+    }
+
+    for (const auto& [name, tensor] : graph.getTensors())
+    {
+        InitTensor(dumb_graph, tensor);
+    }
+
+    // InitDumbTensors(dumb_graph, graph.getTensors());
 
     for (const Node& node : graph.getNodes())
     {

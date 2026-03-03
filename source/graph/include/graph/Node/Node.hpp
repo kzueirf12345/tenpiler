@@ -16,8 +16,9 @@ namespace tenpiler {
 namespace graph {
 
 template <typename T>
-concept IsTenpilerNode = requires(T node) {
-    { node.meta() } noexcept -> std::convertible_to<const NodeMeta&>;
+concept IsTenpilerNode = requires(T this_node, T other) {
+    { this_node.meta() } noexcept -> std::convertible_to<const NodeMeta&>;
+    // { this_node == other } -> std::convertible_to<bool>;
 };
 
 
@@ -36,6 +37,8 @@ private:
         virtual std::string getDot() const = 0;
 
         virtual std::unique_ptr<Concept> clone() const = 0;
+
+        virtual bool equals_to(const Concept& other) const = 0;
     };
 
     template <typename T>
@@ -60,6 +63,12 @@ private:
 
         std::string getDot() const override {
             return dump::GetDot(node_instance);
+        }
+
+        // called only after verification typeid ==
+        [[nodiscard]] bool equals_to(const Concept& other) const override {
+            const auto& other_model = static_cast<const Model<T>&>(other);
+            return node_instance == other_model.node_instance; 
         }
     };
 
@@ -87,18 +96,36 @@ public:
     ~Node() = default;
 
 public:
+    friend bool operator==(const Node& lhs, const Node& rhs) {
+        if (lhs.pImpl == rhs.pImpl) { // Проверка на тот же самый объект или оба nullptr
+            return true;
+        }
+        if (!lhs.pImpl || !rhs.pImpl) {
+            return false;
+        }
+        if (lhs.pImpl->getName() != rhs.pImpl->getName()) {
+            return false;
+        }
+        return lhs.pImpl->equals_to(*rhs.pImpl);
+    }
+    
+    friend bool operator!=(const Node& lhs, const Node& rhs) {
+        return !(lhs == rhs);
+    }
+
+public:
 
     [[nodiscard]] const std::string&              sayMyName () const noexcept { return pImpl->getName   (); }
     [[nodiscard]] const std::vector<std::string>& getInputs () const noexcept { return pImpl->getInputs (); }
     [[nodiscard]] const std::vector<std::string>& getOutputs() const noexcept { return pImpl->getOutputs(); }
-    
+
     std::string getDot() const { return pImpl->getDot(); }
 
     template <typename T>
     [[nodiscard]] std::optional<T> getAttribute(const std::string& name) const {
         std::any val = pImpl->getAttribute(name);
 
-        if (val.has_value()) {
+        if (!val.has_value()) {
             return std::nullopt;
         }
 

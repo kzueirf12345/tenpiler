@@ -3,29 +3,19 @@ name: CI Build
 on: [pull_request]
 
 jobs:
-  build:
+
+  prepare_onnx:
     runs-on: ubuntu-22.04
-
-    strategy:
-      fail-fast: false
-      matrix:
-        build_type: [Release, Debug]
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
-    - name: Install system dependencies
+    - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential libprotobuf-dev protobuf-compiler libfmt-dev graphviz cmake
+        sudo apt-get install -y build-essential libprotobuf-dev protobuf-compiler cmake
 
     - name: Cache ONNX
       id: cache-onnx
@@ -47,6 +37,36 @@ jobs:
         cmake --build build -j $(nproc)
         cmake --install build
 
+  build_and_test:
+    needs: prepare_onnx
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libprotobuf-dev protobuf-compiler libfmt-dev graphviz cmake
+
+    - name: Restore ONNX cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.workspace }}/onnx-install
+        key: ${{ runner.os }}-onnx-1.14
+
     - name: Configure CMake
       run: >
         cmake -B build 
@@ -55,3 +75,8 @@ jobs:
 
     - name: Build project
       run: cmake --build build --config ${{ matrix.build_type }} -j $(nproc)
+
+    - name: Run tests
+      run: ctest --test-dir build --output-on-failure -V -C ${{ matrix.build_type }}
+      env:
+        LD_LIBRARY_PATH: ${{ github.workspace }}/onnx-install/lib:${{ github.workspace }}/onnx-install/lib64:${{ env.LD_LIBRARY_PATH }}

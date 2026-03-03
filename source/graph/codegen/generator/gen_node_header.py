@@ -111,6 +111,12 @@ def generate_op_decl(op_desc, verbose=False):
         
         decl += "\n"
     
+    decl +=                                                                     \
+        "public:\n"                                                             \
+        "\n"                                                                    \
+        f"\tfriend bool operator==(const {name}&, const {name}&) = default;\n"  \
+        "\n"
+
     decl += "};\n"
         
     return decl
