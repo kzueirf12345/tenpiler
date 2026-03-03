@@ -34,5 +34,12 @@ public:
     Type type = Tensor::Type::Unknown;
 };
 
+inline bool operator==(const Tensor& lhs, const Tensor& rhs) noexcept {
+    
+    return lhs.name  == rhs.name &&
+           lhs.shape == rhs.shape &&
+           lhs.type  == rhs.type;
+}
+
 }
 }

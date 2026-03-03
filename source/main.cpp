@@ -33,7 +33,7 @@ int main(const int argc, const char *argv[]) try {
         tenpiler::graph::Graph graph;
         graph.LoadFromOnnx(input);
 
-        RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph));
+        RLSU_DUMP(tenpiler::graph::dump::GraphDumb(graph), filename);
     }
 
     return EXIT_SUCCESS;

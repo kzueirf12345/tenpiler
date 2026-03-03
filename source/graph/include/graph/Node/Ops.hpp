@@ -38,6 +38,10 @@ public:
 		std::vector<std::string> outputs
 	);
 
+public:
+
+	friend bool operator==(const Add&, const Add&) = default;
+
 };
 
 class Mul {
@@ -64,6 +68,10 @@ public:
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs
 	);
+
+public:
+
+	friend bool operator==(const Mul&, const Mul&) = default;
 
 };
 
@@ -92,6 +100,10 @@ public:
 		std::vector<std::string> outputs
 	);
 
+public:
+
+	friend bool operator==(const Sub&, const Sub&) = default;
+
 };
 
 class Div {
@@ -118,6 +130,10 @@ public:
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs
 	);
+
+public:
+
+	friend bool operator==(const Div&, const Div&) = default;
 
 };
 
@@ -181,6 +197,10 @@ public:
 	[[nodiscard]] const uint64_t& get_groups() const noexcept { return groups_; };
 	[[nodiscard]] const PadType& get_auto_pad() const noexcept { return auto_pad_; };
 
+public:
+
+	friend bool operator==(const Conv&, const Conv&) = default;
+
 };
 
 class MaxPool {
@@ -243,6 +263,10 @@ public:
 	[[nodiscard]] const PadType& get_auto_pad() const noexcept { return auto_pad_; };
 	[[nodiscard]] const bool& get_ceil_mode() const noexcept { return ceil_mode_; };
 
+public:
+
+	friend bool operator==(const MaxPool&, const MaxPool&) = default;
+
 };
 
 class Gemm {
@@ -288,6 +312,10 @@ public:
 	[[nodiscard]] const bool& get_transA() const noexcept { return transA_; };
 	[[nodiscard]] const bool& get_transB() const noexcept { return transB_; };
 
+public:
+
+	friend bool operator==(const Gemm&, const Gemm&) = default;
+
 };
 
 class Relu {
@@ -315,6 +343,10 @@ public:
 		std::vector<std::string> outputs
 	);
 
+public:
+
+	friend bool operator==(const Relu&, const Relu&) = default;
+
 };
 
 class MatMul {
@@ -341,6 +373,10 @@ public:
 		std::vector<std::string> inputs,
 		std::vector<std::string> outputs
 	);
+
+public:
+
+	friend bool operator==(const MatMul&, const MatMul&) = default;
 
 };
 

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(tenpiler LANGUAGES CXX)
+enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -113,3 +114,10 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )
+
+###===========================================TESTS=================================================
+
+option(BUILD_TESTING "Build the testing tree" ON)
+if(BUILD_TESTING)
+    add_subdirectory(tests/graph)
+endif()
