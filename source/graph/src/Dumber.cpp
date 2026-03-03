@@ -112,25 +112,35 @@ void GraphDumb(const Graph& graph)
     {
         try {
 
-        for (const std::string& input_tensor_name : node.getInputs())
+        const auto& inputs  = node.getInputs();
+        const auto& outputs = node.getOutputs();
+
+        for (size_t i = 0; i < inputs.size(); i++)
         {
-            RLSU::Graphics::Graph::Edge edge = {.origin_ptr = &graph.getTensor(input_tensor_name),
-                                                .dest_ptr   = &node                                    ,
-                                                .arrowhead  = RLSU::Graphics::Shapes::EDGE_END_NORMAL  ,
-                                                .arrowtail  = RLSU::Graphics::Shapes::EDGE_END_NONE    };
+            const std::string& input_tensor_name = inputs[i];
+
+            RLSU::Graphics::Graph::Edge edge = {.origin_ptr = &graph.getTensor(input_tensor_name) ,
+                                                .dest_ptr   = &node                                     ,
+                                                .label      = std::to_string(i)                     ,
+                                                .arrowhead  = RLSU::Graphics::Shapes::EDGE_END_NORMAL    ,
+                                                .arrowtail  = RLSU::Graphics::Shapes::EDGE_END_NONE     };
 
             dumb_graph.AddEdge(edge);
         }
 
-        for (const std::string& output_tensor_name : node.getOutputs())
+        for (size_t i = 0; i < outputs.size(); i++)
         {
+            const std::string& output_tensor_name = outputs[i];
+
             RLSU::Graphics::Graph::Edge edge = {.origin_ptr = &node                                     ,
-                                                .dest_ptr   = &graph.getTensor(output_tensor_name),
-                                                .arrowhead  = RLSU::Graphics::Shapes::EDGE_END_NONE    ,
-                                                .arrowtail  = RLSU::Graphics::Shapes::EDGE_END_DOT     };
+                                                .dest_ptr   = &graph.getTensor(output_tensor_name) ,
+                                                .label      = std::to_string(i)                     ,   
+                                                .arrowhead  = RLSU::Graphics::Shapes::EDGE_END_NONE      ,
+                                                .arrowtail  = RLSU::Graphics::Shapes::EDGE_END_DOT      };
 
             dumb_graph.AddEdge(edge);
         }
+
 
         } catch(std::exception& e)  {
             std::cerr << "exception in GraphDumb edges building: '" << e.what() << "'" << std::endl;
