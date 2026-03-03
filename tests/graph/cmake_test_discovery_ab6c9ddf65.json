@@ -1,0 +1,90 @@
+{
+  "tests": 13,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "SimpleOnnxFiles\/GraphParserTest",
+      "tests": 13,
+      "testsuite": [
+        {
+          "name": "ParseCorrectness\/0",
+          "value_param": "{ file: \"onnx_simple\/add.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/1",
+          "value_param": "{ file: \"onnx_simple\/mul.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/2",
+          "value_param": "{ file: \"onnx_simple\/matmul.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/3",
+          "value_param": "{ file: \"onnx_simple\/maxpool0.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/4",
+          "value_param": "{ file: \"onnx_simple\/maxpool1.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/5",
+          "value_param": "{ file: \"onnx_simple\/conv0.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/6",
+          "value_param": "{ file: \"onnx_simple\/conv1.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/7",
+          "value_param": "{ file: \"onnx_simple\/conv2.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/8",
+          "value_param": "{ file: \"onnx_simple\/conv3.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/9",
+          "value_param": "{ file: \"onnx_simple\/div.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/10",
+          "value_param": "{ file: \"onnx_simple\/gemm.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/11",
+          "value_param": "{ file: \"onnx_simple\/relu.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        },
+        {
+          "name": "ParseCorrectness\/12",
+          "value_param": "{ file: \"onnx_simple\/sub.onnx\" }",
+          "file": "\/home\/frukt71\/Github\/tenpiler\/tests\/graph\/parsing.cpp",
+          "line": 24
+        }
+      ]
+    }
+  ]
+}
